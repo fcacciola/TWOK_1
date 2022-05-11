@@ -32,6 +32,15 @@ namespace DIGITC1
 
     public static Context Instance => mInstance ;
 
+    static public string       InputSample       { get { return Instance.mInputSample    ; } set { Instance.mInputSample    = value ; } }
+    static public string       ScriptFile        { get { return Instance.mScriptFile     ; } set { Instance.mScriptFile     = value ; } }
+    static public string       BaseScriptContents    { get { return Instance.mScriptContents ; } set { Instance.mScriptContents = value ; } }
+    static public WaveSignal   InputSignal       { get { return Instance.mInputSignal    ; } set { Instance.mInputSignal    = value ; } }
+
+    static public ScriptDriver ScriptDriver      { get { return Instance.mScriptDriver ;  } }
+
+
+    public static void Error            ( string aText )             => Instance._Error( aText ) ;
     public static void Log              ( string aText )             => Instance._Log( aText ) ;
     public static void Log              ( bool aDoIt, string aText ) => Instance._Log(aDoIt, aText ) ;
     public static void AddResults       ( string aText )             => Instance._AddResults( aText ) ;
@@ -44,6 +53,11 @@ namespace DIGITC1
     public static Params Params {  get { return Instance.mParams ;} set { Instance.mParams = value ; } }
 
     void _Log( string aText )
+    {
+      mForm.outputBox.AppendText( aText + Environment.NewLine);
+    }
+
+    void _Error( string aText )
     {
       mForm.outputBox.AppendText( aText + Environment.NewLine);
     }
@@ -74,9 +88,14 @@ namespace DIGITC1
       return ( mParams.SegmentIdxToLog == -1 || mParams.SegmentIdxToLog == aSignal.SegmentIdx );
     }
 
-    Params mParams = new Params();
+    string       mInputSample    ;
+    string       mScriptFile     ;
+    string       mScriptContents ;
+    ScriptDriver mScriptDriver   = new ScriptDriver();
 
-    readonly Form1 mForm ;  
+    public WaveSignal     mInputSignal ;
+    public Params         mParams = new Params();
+    public readonly Form1 mForm ;  
 
   }
 

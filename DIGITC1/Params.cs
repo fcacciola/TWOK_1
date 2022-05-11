@@ -22,14 +22,11 @@ namespace DIGITC1
 
   public class Params
   {
-    public string     SamplesFolder       { get ; set ; }
-    public string     ScriptsFolder       { get ; set ; }
-    public string     InputSample         { get ; set ; }
-    public string     ScriptFile          { get ; set ; }
-    public WaveSignal InputSignal         { get ; set ; }
-    public float      WindowSizeInSeconds { get ; set ; } = 1f ;
-    public int        SegmentIdxToRender  { get ; set ; } = 0 ;
-    public int        SegmentIdxToLog     { get ; set ; } = 0 ;
+    public string SamplesFolder       { get ; set ; }
+    public string ScriptsFolder       { get ; set ; }
+    public float  WindowSizeInSeconds { get ; set ; } = 1f ;
+    public int    SegmentIdxToRender  { get ; set ; } = 0 ;
+    public int    SegmentIdxToLog     { get ; set ; } = 0 ;
 
     public EnvelopeParams EnvelopeParams { get ; set ; } = new EnvelopeParams() ;
   }

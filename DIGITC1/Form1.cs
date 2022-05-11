@@ -23,11 +23,14 @@ namespace DIGITC1
     {
       Context.Create(this);
 
-      Context.Params.SamplesFolder = @"C:\Users\User\Dropbox\ECB\ITC\Digital ITC\Samples" ;
-      Context.Params.ScriptsFolder = @"C:\Users\User\Dropbox\ECB\ITC\Digital ITC\Scripts" ;
+      Context.Params.SamplesFolder = @".\Input\Samples" ;
+      Context.Params.ScriptsFolder = @".\Input\Scripts" ;
 
       LoadSamples();
       LoadScripts();
+
+      Context.BaseScriptContents = File.ReadAllText(@".\Input\Scripts\BaseScript.cs");
+
     }
 
     void LoadSamples()
@@ -43,7 +46,7 @@ namespace DIGITC1
     void LoadScripts()
     {
       scriptsList.BeginUpdate();
-      foreach ( var lEntry in Directory.EnumerateFiles(Context.Params.ScriptsFolder, "*.dcs") )
+      foreach ( var lEntry in Directory.EnumerateFiles(Context.Params.ScriptsFolder, "*.txt") )
       {
         scriptsList.Items.Add( Path.GetFileNameWithoutExtension(lEntry) );
       }
@@ -52,21 +55,20 @@ namespace DIGITC1
 
     private void samplesList_SelectedValueChanged(object sender, EventArgs e)
     {
-      Context.Params.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
+      Context.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
       LoadInput();
     }
 
 
     private void scriptsList_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Context.Params.ScriptFile = $"{Context.Params.ScriptsFolder}\\{scriptsList.SelectedItem.ToString()}.dcs";
+      Context.ScriptFile = $"{Context.Params.ScriptsFolder}\\{scriptsList.SelectedItem.ToString()}.txt";
 
-      if ( File.Exists(Context.Params.ScriptFile) )
+      if ( File.Exists(Context.ScriptFile) )
       {
-        scriptBox.Text = File.ReadAllText(Context.Params.ScriptFile);
+        var lSC = File.ReadAllText(Context.ScriptFile);
+        scriptBox.Text = lSC ;
       }
-
-
     }
 
     private void button1_Click(object sender, EventArgs e)
@@ -76,16 +78,17 @@ namespace DIGITC1
 
     void LoadInput()
     {
-      if ( File.Exists(Context.Params.InputSample) )
+      if ( File.Exists(Context.InputSample) )
       {
-        var lASource = new FileAudioSource(Context.Params.InputSample);
-        Context.Params.InputSignal = lASource.CreateSignal();
-        Context.Params.InputSignal.Render();
+        var lASource = new FileAudioSource(Context.InputSample);
+        Context.InputSignal = lASource.CreateSignal();
+        Context.InputSignal.Render();
       }
     }
 
     void Start()
     {
+      Context.ScriptDriver.Run(Context.ScriptFile);
     }
   }
 }
