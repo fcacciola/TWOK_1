@@ -28,15 +28,17 @@ namespace DIGITC1
 
       List<Signal> lSegments = aInput.Segment(Context.Params.WindowSizeInSeconds);
 
+      lSegments[0].Render();
+
+      Context.Log(Context.LogThisSegment(lSegments[0]),$"Sound Signal: {lSegments[0]}");
+
       foreach( Signal lSegment in lSegments )
       {
         Signal lCurrSignal = lSegment ;
 
-        lCurrSignal.Render();
         foreach( var lModule in mModules ) 
         {
           lCurrSignal = lModule.ProcessSignal( lCurrSignal );
-          lCurrSignal.Render();
         }
       }
 

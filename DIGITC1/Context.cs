@@ -18,9 +18,6 @@ namespace DIGITC1
     Context( Form1 aForm )
     {
       mForm = aForm;  
-
-      mForm.signalPlot1.Gain   = 100 ;
-      mForm.signalPlot1.Stride = 150 ;
     }
 
     public static void Create( Form1 aForm )
@@ -34,7 +31,7 @@ namespace DIGITC1
 
     static public string       InputSample       { get { return Instance.mInputSample    ; } set { Instance.mInputSample    = value ; } }
     static public string       ScriptFile        { get { return Instance.mScriptFile     ; } set { Instance.mScriptFile     = value ; } }
-    static public string       BaseScriptContents    { get { return Instance.mScriptContents ; } set { Instance.mScriptContents = value ; } }
+    static public string       BaseScriptContents{ get { return Instance.mScriptContents ; } set { Instance.mScriptContents = value ; } }
     static public WaveSignal   InputSignal       { get { return Instance.mInputSignal    ; } set { Instance.mInputSignal    = value ; } }
 
     static public ScriptDriver ScriptDriver      { get { return Instance.mScriptDriver ;  } }
@@ -75,6 +72,7 @@ namespace DIGITC1
 
     void _RenderWaveForm( DiscreteSignal aSignal, int aIdx, string aName, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine  )
     {
+      mForm.signalPlot1.RemoveLayer(aName);
       mForm.signalPlot1.SetLayer(aName, aIdx, aSignal, aFillColor, aLineColor, aLineThickness, aTopLine, aBottomLine);
     }
 

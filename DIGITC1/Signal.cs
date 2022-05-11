@@ -86,6 +86,8 @@ namespace DIGITC1
       Context.RenderWaveForm(Rep, Idx, Name, RenderFillColor, RenderLineColor, RenderLineThickness, RenderTopLine, RenderBottomLine);
     }
 
+    public float ComputeMax() => Rep.Samples.Max();
+
     public WaveSignal Transform( Func<float,float> Transformation ) 
     {
       float[] lTransformedSamples = new float[Rep.Samples.Length];
@@ -113,7 +115,6 @@ namespace DIGITC1
           var lSignal = CopyWith( new DiscreteSignal(Rep.SamplingRate,lSegmentSamples) );
 
           lSignal.SegmentIdx = rList.Count; 
-          lSignal.Name       = $"{Name}_{lSignal.SegmentIdx}";
 
           rList.Add (lSignal);
         }

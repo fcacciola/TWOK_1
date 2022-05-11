@@ -38,7 +38,7 @@ namespace DIGITC1
 
         rSignal.Idx             = 0 ;
         rSignal.Name            = "AudioSource";
-        rSignal.RenderFillColor = Color.FromArgb(128,Color.Blue);
+        rSignal.RenderFillColor = Color.FromArgb(55,Color.Blue);
       }
 
       return rSignal ;

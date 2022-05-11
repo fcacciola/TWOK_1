@@ -30,14 +30,19 @@ namespace DIGITC1
 
     public abstract void UserCode();
 
-    protected void print( string s )
+    protected void print( string aS )
     {
-      Context.Log( s );
+      Context.Log( aS );
     }
 
-    protected void envelope( float art )
+    protected void envelope( double aAttackTime, double aReleaseTime, int aWindowSize )
     {
-      mPipeline.AddModule( new EnvelopeModule( new EnvelopeParams(){ AttackTime = art, ReleaseTime = art })); 
+      mPipeline.AddModule( new EnvelopeModule( new EnvelopeParams(){ AttackTime = (float)aAttackTime, ReleaseTime = (float)aReleaseTime, WindowSize = aWindowSize })); 
+    }
+
+    protected void amplitudeGate( double aThreshold )
+    {
+      mPipeline.AddModule( new AmplitudeGateModule( new AmplitudeGateParams(){  Thresholds = new float[1]{(float)aThreshold} } )); 
     }
 
     Pipeline mPipeline = null;
@@ -49,7 +54,7 @@ namespace DIGITC1
   {
     public ScriptDriver() {}
 
-    public void Run( string aScriptFile )
+    public void Run( string aUserCode )
     {
       CSharpCodeProvider lProvider   = new CSharpCodeProvider();
       CompilerParameters lParameters = new CompilerParameters();
@@ -60,9 +65,8 @@ namespace DIGITC1
       lParameters.ReferencedAssemblies.Add("nwaves.dll");
       lParameters.IncludeDebugInformation = true ;
 
-      string lUserCode   = File.ReadAllText(aScriptFile) ;
       string lBaseScript = Context.BaseScriptContents ;
-      string lScript     = lBaseScript.Replace("//<_USER_CODE_HERE>",lUserCode);
+      string lScript     = lBaseScript.Replace("//<_USER_CODE_HERE>",aUserCode);
 
       var lResults = lProvider.CompileAssemblyFromSource(lParameters,lScript);
 

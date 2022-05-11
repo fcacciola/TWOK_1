@@ -19,10 +19,22 @@ namespace NWaves.DemoForms.UserControls
         internal bool           _topLine ;
         internal bool           _bottomLine ;
       }
+
         /// <summary>
         /// Signal to plot
         /// </summary>
         public List<Layer> _layers = null ;
+
+        public void RemoveLayer ( string aName )
+        {
+          if ( _layers != null )
+          {
+            var lIdx = _layers.FindIndex( l => l._name == aName ) ;
+            if ( lIdx >= 0 )
+             _layers.RemoveAt( lIdx ) ;
+          }
+          SetupBitmap();
+        }
 
         public void SetLayer( string aName, int aIdx, DiscreteSignal aSignal, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine )
         {
@@ -45,9 +57,9 @@ namespace NWaves.DemoForms.UserControls
 
             _layers.Sort( delegate(Layer l1, Layer l2) {  return l1._idx.CompareTo(l2._idx) ; } );
 
-            SetupBitmap();
           }
 
+          SetupBitmap();
         }
 
         void SetupBitmap()
@@ -59,9 +71,9 @@ namespace NWaves.DemoForms.UserControls
               lMaxLength = Math.Max(lMaxLength,lLayer._signal.Length);
 
             AutoScrollMinSize = new Size(lMaxLength / _stride + 20, 0);
-            MakeBitmap();
-            Invalidate();
           }
+          MakeBitmap();
+          Invalidate();
         }
 
         private int _stride = 64;
@@ -91,8 +103,8 @@ namespace NWaves.DemoForms.UserControls
         {
             base.OnPaint(e);
 
-            if (_bmp == null && _layers != null && _layers.Count > 0 ) 
-              MakeBitmap();
+            //if (_bmp == null && _layers != null && _layers.Count > 0 ) 
+            //  MakeBitmap();
 
             if ( _bmp != null ) 
               e.Graphics.DrawImage(_bmp, 0, 0, new Rectangle(-AutoScrollPosition.X, 0, Width, Height), GraphicsUnit.Pixel);
@@ -139,7 +151,7 @@ namespace NWaves.DemoForms.UserControls
 
             gray.Dispose();
 
-            if (_layers.Count > 0)
+            if (_layers != null && _layers.Count > 0)
             {
                 DrawAxes(g, -(Height - 2 * PaddingY) / (2 * Gain), 
                              (Height - 2 * PaddingY) / (2 * Gain));
@@ -151,8 +163,11 @@ namespace NWaves.DemoForms.UserControls
 
                   var i = 0;
                   var x = PaddingX;
-                  while (i < lLayer._signal.Length - _stride)
 
+                  float prevty = 0;
+                  float prevby = 0;
+
+                  while (i < lLayer._signal.Length - _stride)
                   {
                       var j = 0;
                       var min = 0.0;
@@ -169,14 +184,23 @@ namespace NWaves.DemoForms.UserControls
                       var ty2 = (float) ty1 + ( lLayer._topLine    ? lLayer._lineThickness : 0 ) ;
                       var by2 = (float) by1 - ( lLayer._bottomLine ? lLayer._lineThickness : 0 ) ;
 
+                      if ( i > 0 && lLayer._topLine)
+                        g.DrawLine(linePen, x-1, prevty, x, ty1);
+
                       if ( ty1 < ty2 )
                         g.DrawLine(linePen, x, ty1, x, ty2);
 
                       if ( ty2 < by2 )
                         g.DrawLine(fillPen, x, ty2, x, by2);
 
+                      if ( i > 0 && lLayer._bottomLine)
+                        g.DrawLine(linePen, x-1, prevby, x, by1);
+
                       if ( by2 < by1 )  
                         g.DrawLine(linePen, x, by2, x, by1);
+
+                      prevty = ty1;
+                      prevby = by1;
 
                       x++;
                       i += _stride;

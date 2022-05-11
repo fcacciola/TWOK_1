@@ -13,21 +13,12 @@ using NWaves.Signals;
 
 namespace DIGITC1
 {
-
-  public class EnvelopeParams
-  {
-    public float AttackTime { get; set; } =  0.3f ;
-    public float ReleaseTime{ get; set; } =  0.3f ;
-  }
-
   public class Params
   {
     public string SamplesFolder       { get ; set ; }
     public string ScriptsFolder       { get ; set ; }
-    public float  WindowSizeInSeconds { get ; set ; } = 1f ;
+    public float  WindowSizeInSeconds { get ; set ; } = 2f ;
     public int    SegmentIdxToRender  { get ; set ; } = 0 ;
     public int    SegmentIdxToLog     { get ; set ; } = 0 ;
-
-    public EnvelopeParams EnvelopeParams { get ; set ; } = new EnvelopeParams() ;
   }
 }

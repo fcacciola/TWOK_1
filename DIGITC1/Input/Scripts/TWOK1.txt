@@ -1,3 +1,11 @@
 print("Hello");
-float arTime = .3f ;
-envelope(arTime);
+
+int    windowSize    = 100 ;
+double attackTime  = .01 ;
+double releaseTime = .01 ;
+
+envelope (attackTime, releaseTime, windowSize );
+
+double agThreshold = 0.4 ;
+
+amplitudeGate (agThreshold) ;

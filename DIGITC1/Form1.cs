@@ -81,14 +81,21 @@ namespace DIGITC1
       if ( File.Exists(Context.InputSample) )
       {
         var lASource = new FileAudioSource(Context.InputSample);
-        Context.InputSignal = lASource.CreateSignal();
+
+        var lISignal = lASource.CreateSignal();
+
+        signalPlot1.Gain   = 100 ;
+        signalPlot1.Stride = (int)Math.Ceiling(lISignal.Rep.Duration) * 10 ;
+
+        Context.InputSignal = lISignal;
         Context.InputSignal.Render();
       }
     }
 
     void Start()
     {
-      Context.ScriptDriver.Run(Context.ScriptFile);
+      if ( Context.InputSignal != null )
+        Context.ScriptDriver.Run(scriptBox.Text);
     }
   }
 }

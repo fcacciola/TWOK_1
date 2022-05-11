@@ -19,15 +19,6 @@ public class Script : ScriptBase
   {
     //<_USER_CODE_HERE>
   }
-
-  //void envelope( float art )
-  //{
-  //  mPipeline.AddModule( new EnvelopeModule( new EnvelopeParams(){ AttackTime = art, ReleaseTime = art })); 
-  //}
-
-  //Context  mContext ;
-  //Pipeline mPipeline = null;
-
 }
 
 }
