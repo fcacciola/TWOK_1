@@ -34,9 +34,11 @@
       this.scriptsList = new System.Windows.Forms.ListBox();
       this.scriptBox = new System.Windows.Forms.TextBox();
       this.outputBox = new System.Windows.Forms.RichTextBox();
-      this.signalPlot1 = new NWaves.DemoForms.UserControls.SignalPlot();
       this.button1 = new System.Windows.Forms.Button();
       this.button2 = new System.Windows.Forms.Button();
+      this.button3 = new System.Windows.Forms.Button();
+      this.renderListBox1 = new System.Windows.Forms.CheckedListBox();
+      this.signalPlot1 = new NWaves.DemoForms.UserControls.SignalPlot();
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -48,14 +50,14 @@
             this.fileToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(3139, 32);
+      this.menuStrip1.Size = new System.Drawing.Size(3690, 36);
       this.menuStrip1.TabIndex = 0;
       this.menuStrip1.Text = "menuStrip1";
       // 
       // fileToolStripMenuItem
       // 
       this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-      this.fileToolStripMenuItem.Size = new System.Drawing.Size(16, 28);
+      this.fileToolStripMenuItem.Size = new System.Drawing.Size(16, 32);
       // 
       // samplesList
       // 
@@ -73,45 +75,31 @@
       this.scriptsList.ItemHeight = 20;
       this.scriptsList.Location = new System.Drawing.Point(25, 437);
       this.scriptsList.Name = "scriptsList";
-      this.scriptsList.Size = new System.Drawing.Size(268, 684);
+      this.scriptsList.Size = new System.Drawing.Size(268, 1204);
       this.scriptsList.TabIndex = 6;
       this.scriptsList.SelectedIndexChanged += new System.EventHandler(this.scriptsList_SelectedIndexChanged);
       // 
       // scriptBox
       // 
-      this.scriptBox.Font = new System.Drawing.Font("Courier New", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.scriptBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.scriptBox.Location = new System.Drawing.Point(299, 437);
       this.scriptBox.Multiline = true;
       this.scriptBox.Name = "scriptBox";
-      this.scriptBox.Size = new System.Drawing.Size(833, 684);
+      this.scriptBox.Size = new System.Drawing.Size(1612, 1201);
       this.scriptBox.TabIndex = 7;
       // 
       // outputBox
       // 
-      this.outputBox.Location = new System.Drawing.Point(1138, 437);
+      this.outputBox.Location = new System.Drawing.Point(1917, 437);
       this.outputBox.Name = "outputBox";
-      this.outputBox.Size = new System.Drawing.Size(1989, 684);
+      this.outputBox.ReadOnly = true;
+      this.outputBox.Size = new System.Drawing.Size(1761, 1201);
       this.outputBox.TabIndex = 8;
       this.outputBox.Text = "";
       // 
-      // signalPlot1
-      // 
-      this.signalPlot1.AutoScroll = true;
-      this.signalPlot1.BackColor = System.Drawing.Color.White;
-      this.signalPlot1.ForeColor = System.Drawing.Color.Blue;
-      this.signalPlot1.Gain = 1F;
-      this.signalPlot1.Location = new System.Drawing.Point(465, 51);
-      this.signalPlot1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-      this.signalPlot1.Name = "signalPlot1";
-      this.signalPlot1.PaddingX = 24;
-      this.signalPlot1.PaddingY = 5;
-      this.signalPlot1.Size = new System.Drawing.Size(2659, 305);
-      this.signalPlot1.Stride = 64;
-      this.signalPlot1.TabIndex = 4;
-      // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(25, 1152);
+      this.button1.Location = new System.Drawing.Point(25, 391);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(116, 48);
       this.button1.TabIndex = 9;
@@ -128,11 +116,47 @@
       this.button2.Text = "Save";
       this.button2.UseVisualStyleBackColor = true;
       // 
+      // button3
+      // 
+      this.button3.Location = new System.Drawing.Point(1917, 395);
+      this.button3.Name = "button3";
+      this.button3.Size = new System.Drawing.Size(116, 36);
+      this.button3.TabIndex = 11;
+      this.button3.Text = "Clear";
+      this.button3.UseVisualStyleBackColor = true;
+      this.button3.Click += new System.EventHandler(this.button3_Click);
+      // 
+      // renderListBox1
+      // 
+      this.renderListBox1.FormattingEnabled = true;
+      this.renderListBox1.Location = new System.Drawing.Point(465, 51);
+      this.renderListBox1.Name = "renderListBox1";
+      this.renderListBox1.Size = new System.Drawing.Size(263, 303);
+      this.renderListBox1.TabIndex = 12;
+      this.renderListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.renderListBox1_ItemCheck);
+      // 
+      // signalPlot1
+      // 
+      this.signalPlot1.AutoScroll = true;
+      this.signalPlot1.BackColor = System.Drawing.Color.White;
+      this.signalPlot1.ForeColor = System.Drawing.Color.Blue;
+      this.signalPlot1.Gain = 1F;
+      this.signalPlot1.Location = new System.Drawing.Point(734, 51);
+      this.signalPlot1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+      this.signalPlot1.Name = "signalPlot1";
+      this.signalPlot1.PaddingX = 24;
+      this.signalPlot1.PaddingY = 5;
+      this.signalPlot1.Size = new System.Drawing.Size(2944, 305);
+      this.signalPlot1.Stride = 64;
+      this.signalPlot1.TabIndex = 4;
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(3139, 1244);
+      this.ClientSize = new System.Drawing.Size(3690, 1650);
+      this.Controls.Add(this.renderListBox1);
+      this.Controls.Add(this.button3);
       this.Controls.Add(this.button2);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.outputBox);
@@ -144,6 +168,7 @@
       this.MainMenuStrip = this.menuStrip1;
       this.Name = "Form1";
       this.Text = "Form1";
+      this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
       this.Load += new System.EventHandler(this.Form1_Load);
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
@@ -163,6 +188,8 @@
     public System.Windows.Forms.RichTextBox outputBox;
     private System.Windows.Forms.Button button1;
     private System.Windows.Forms.Button button2;
+    private System.Windows.Forms.Button button3;
+    public System.Windows.Forms.CheckedListBox renderListBox1;
   }
 }
 

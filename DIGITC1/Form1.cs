@@ -53,6 +53,28 @@ namespace DIGITC1
       scriptsList.EndUpdate();
     }
 
+    public void AddRenderModule( string aModule )
+    {
+      renderListBox1.BeginUpdate();
+      renderListBox1.Items.Add( aModule );  
+      renderListBox1.SetItemChecked( renderListBox1.Items.Count - 1, true );
+      renderListBox1.EndUpdate();
+    }
+
+    public bool IsRenderModuleChecked( string aName )
+    {
+      int lIdx = -1 ;
+      for ( int i = 0 ; i < renderListBox1.Items.Count ; i++ )
+      {
+        if ( renderListBox1.GetItemText(renderListBox1.Items[i]) == aName )
+        {
+          lIdx = i ; 
+          break ;
+        }
+      }
+      return lIdx != -1 ? renderListBox1.GetItemCheckState(lIdx) == System.Windows.Forms.CheckState.Checked : false ;
+    }
+
     private void samplesList_SelectedValueChanged(object sender, EventArgs e)
     {
       Context.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
@@ -87,6 +109,10 @@ namespace DIGITC1
         signalPlot1.Gain   = 100 ;
         signalPlot1.Stride = (int)Math.Ceiling(lISignal.Rep.Duration) * 10 ;
 
+        lISignal.Name = "Input";
+
+        AddRenderModule(lISignal.Name);
+
         Context.InputSignal = lISignal;
         Context.InputSignal.Render();
       }
@@ -96,6 +122,16 @@ namespace DIGITC1
     {
       if ( Context.InputSignal != null )
         Context.ScriptDriver.Run(scriptBox.Text);
+    }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+      outputBox.Text = "" ;
+    }
+
+    private void renderListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
+    {
+
     }
   }
 }

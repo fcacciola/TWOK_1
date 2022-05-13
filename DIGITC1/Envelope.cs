@@ -22,27 +22,38 @@ namespace DIGITC1
 
   public class EnvelopeModule : AudioInputModule
   {
-    public EnvelopeModule( EnvelopeParams aParams ) : base() { mParams = aParams ; }
+    public EnvelopeModule( float aAttackTime, float aReleaseTime, int aWindowSize ) : base() 
+    { 
+      mAttackTime  = aAttackTime;  
+      mReleaseTime = aReleaseTime;  
+      mWindowSize  = aWindowSize;  
+    }
 
-    protected override Signal ProcessAudioSignal ( WaveSignal aInput )
+    protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
-      float[] lAveraged = Average(aInput.Rep.Samples, 100);
+      float[] lAveraged = Average(aInput.Samples, mWindowSize);
 
-      var lAVS = new DiscreteSignal(aInput.Rep.SamplingRate, lAveraged);
+      var lAVS = new DiscreteSignal(aInput.SamplingRate, lAveraged);
 
-      var lES = Operation.Envelope(lAVS, mParams.AttackTime, mParams.ReleaseTime);
+      var lES = Operation.Envelope(lAVS, mAttackTime, mReleaseTime);
 
       Signal rSignal = aInput.CopyWith(lES);
 
-      rSignal.Idx              = 1 ;
+      rSignal.Idx              = aStep + 1 ;
       rSignal.Name             = "Envelope";
       rSignal.RenderFillColor  = Color.Empty ;
       rSignal.RenderLineColor  = Color.Red ;
       rSignal.RenderTopLine    = true ;  
       rSignal.RenderBottomLine = false ;  
-      rSignal.Render();
 
-      Context.Log(Context.LogThisSegment(aInput),$"Envelope:{Environment.NewLine}{rSignal}");
+
+      if ( aSegmentIdx == 0 ) 
+      {
+        Context.Form.AddRenderModule(rSignal.Name);
+        rSignal.Render();
+      }
+
+      Context.Log(aSegmentIdx==0,$"Envelope:{Environment.NewLine}{rSignal}");
 
       return rSignal ;
     }
@@ -68,7 +79,10 @@ namespace DIGITC1
       return rOutput ;
 
     }
-    EnvelopeParams mParams ;
+
+    float mAttackTime ;
+    float mReleaseTime;
+    int   mWindowSize ;
 
   }
 }

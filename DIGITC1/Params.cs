@@ -17,7 +17,7 @@ namespace DIGITC1
   {
     public string SamplesFolder       { get ; set ; }
     public string ScriptsFolder       { get ; set ; }
-    public float  WindowSizeInSeconds { get ; set ; } = 2f ;
+    public float  WindowSizeInSeconds { get ; set ; } = 0f ;
     public int    SegmentIdxToRender  { get ; set ; } = 0 ;
     public int    SegmentIdxToLog     { get ; set ; } = 0 ;
   }

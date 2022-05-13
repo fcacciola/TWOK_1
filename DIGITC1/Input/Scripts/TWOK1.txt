@@ -1,11 +1,9 @@
 print("Hello");
 
-int    windowSize    = 100 ;
-double attackTime  = .01 ;
-double releaseTime = .01 ;
+envelope ( AttackTime: .01, ReleaseTime: .01, WindowSize: 100 );
 
-envelope (attackTime, releaseTime, windowSize );
+amplitudeGate ( Threshold: 0.5 ) ;
 
-double agThreshold = 0.4 ;
+extractGatedSymbols ( MinDuration: 0.1, MergeGap: 0.05 );
 
-amplitudeGate (agThreshold) ;
+binarizeByDuration( Threshold : .6 ) ;

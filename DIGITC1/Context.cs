@@ -36,18 +36,20 @@ namespace DIGITC1
 
     static public ScriptDriver ScriptDriver      { get { return Instance.mScriptDriver ;  } }
 
+    static public Form1 Form { get { return Instance.mForm ; } }
 
-    public static void Error            ( string aText )             => Instance._Error( aText ) ;
-    public static void Log              ( string aText )             => Instance._Log( aText ) ;
-    public static void Log              ( bool aDoIt, string aText ) => Instance._Log(aDoIt, aText ) ;
-    public static void AddResults       ( string aText )             => Instance._AddResults( aText ) ;
-    public static bool LogThisSegment   ( Signal aSignal )           => Instance._LogThisSegment( aSignal ) ;  
-    public static bool RenderThisSegment( Signal aSignal )           => Instance._RenderThisSegment( aSignal ) ;
+    public static bool ShouldRender( string aName )             => Instance._ShouldRender(aName);
+    public static void Error       ( string aText )             => Instance._Error( aText ) ;
+    public static void Log         ( string aText )             => Instance._Log( aText ) ;
+    public static void Log         ( bool aDoIt, string aText ) => Instance._Log(aDoIt, aText ) ;
+    public static void AddResults  ( string aText )             => Instance._AddResults( aText ) ;
 
     public static void RenderWaveForm   ( DiscreteSignal aSignal, int aIdx, string aName, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine ) 
       => Instance._RenderWaveForm( aSignal, aIdx, aName, aFillColor, aLineColor, aLineThickness, aTopLine, aBottomLine ) ;  
 
     public static Params Params {  get { return Instance.mParams ;} set { Instance.mParams = value ; } }
+
+    bool _ShouldRender( string aName ) => mForm.IsRenderModuleChecked(aName);
 
     void _Log( string aText )
     {
@@ -74,16 +76,6 @@ namespace DIGITC1
     {
       mForm.signalPlot1.RemoveLayer(aName);
       mForm.signalPlot1.SetLayer(aName, aIdx, aSignal, aFillColor, aLineColor, aLineThickness, aTopLine, aBottomLine);
-    }
-
-    bool _LogThisSegment( Signal aSignal )
-    {
-      return ( mParams.SegmentIdxToLog == -1 || mParams.SegmentIdxToLog == aSignal.SegmentIdx );
-    }
-
-    bool _RenderThisSegment( Signal aSignal )
-    {
-      return ( mParams.SegmentIdxToLog == -1 || mParams.SegmentIdxToLog == aSignal.SegmentIdx );
     }
 
     string       mInputSample    ;

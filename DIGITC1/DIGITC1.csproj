@@ -69,6 +69,8 @@
     <Compile Include="AudioSource.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="AmplitudeGate.cs" />
+    <Compile Include="BinarizeByDuration.cs" />
+    <Compile Include="ExtractGatedlSymbols.cs" />
     <Compile Include="Envelope.cs" />
     <Content Include="Input\Scripts\BaseScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -30,16 +30,22 @@ namespace DIGITC1
 
       lSegments[0].Render();
 
-      Context.Log(Context.LogThisSegment(lSegments[0]),$"Sound Signal: {lSegments[0]}");
+      Context.Log($"Sound Signal: {lSegments[0]}");
+
+      int lSegmentIdx = 0 ;
 
       foreach( Signal lSegment in lSegments )
       {
         Signal lCurrSignal = lSegment ;
 
+        int lStep = 0 ;
+
         foreach( var lModule in mModules ) 
         {
-          lCurrSignal = lModule.ProcessSignal( lCurrSignal );
+          lCurrSignal = lModule.ProcessSignal( lSegmentIdx, lStep ++ , lCurrSignal );
         }
+
+        lSegmentIdx ++ ;
       }
 
       return lSignal;

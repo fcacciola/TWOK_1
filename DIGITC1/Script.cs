@@ -20,11 +20,18 @@ namespace DIGITC1
   {
     public void DoRun()
     {
-      mPipeline = new Pipeline();
+      try
+      { 
+        mPipeline = new Pipeline();
 
-      UserCode();
+        UserCode();
 
-      mPipeline.ProcessSignal(Context.InputSignal);  
+        mPipeline.ProcessSignal(Context.InputSignal);  
+      }
+      catch (Exception ex)
+      {
+        Context.Error(ex.ToString());
+      }
 
     }
 
@@ -35,14 +42,24 @@ namespace DIGITC1
       Context.Log( aS );
     }
 
-    protected void envelope( double aAttackTime, double aReleaseTime, int aWindowSize )
+    protected void envelope( double AttackTime, double ReleaseTime, int WindowSize )
     {
-      mPipeline.AddModule( new EnvelopeModule( new EnvelopeParams(){ AttackTime = (float)aAttackTime, ReleaseTime = (float)aReleaseTime, WindowSize = aWindowSize })); 
+      mPipeline.AddModule( new EnvelopeModule( (float)AttackTime, (float)ReleaseTime, WindowSize )) ; 
     }
 
-    protected void amplitudeGate( double aThreshold )
+    protected void amplitudeGate( double Threshold )
     {
-      mPipeline.AddModule( new AmplitudeGateModule( new AmplitudeGateParams(){  Thresholds = new float[1]{(float)aThreshold} } )); 
+      mPipeline.AddModule( new AmplitudeGateModule( new float[1]{(float)Threshold} )); 
+    }
+
+    protected void extractGatedSymbols( double MinDuration, double MergeGap )
+    {
+      mPipeline.AddModule( new ExtractGatedlSymbols((float)MinDuration, (float)MergeGap) ); 
+    }
+
+    protected void binarizeByDuration( double Threshold )
+    {
+      mPipeline.AddModule( new BinarizeByDuration(Threshold) ); 
     }
 
     Pipeline mPipeline = null;

@@ -23,13 +23,13 @@ namespace DIGITC1
 
     public void Render() 
     {
-      if ( Context.RenderThisSegment(this) )
+      if ( Context.ShouldRender(Name) )
         DoRender();
     }
 
     public abstract void DoRender() ;
 
-    public abstract List<Signal> Segment( float aWindowSizeInSeconds ) ;
+    public virtual List<Signal> Segment( float aWindowSizeInSeconds ) { return new List<Signal>(){this} ; }
 
     public abstract object Clone();
 
@@ -42,7 +42,6 @@ namespace DIGITC1
       RenderLineThickness = aRHS.RenderLineThickness ;
       RenderTopLine       = aRHS.RenderTopLine       ;
       RenderBottomLine    = aRHS.RenderBottomLine    ;
-      SegmentIdx          = aRHS.SegmentIdx          ;
     }
 
     public int    Idx                 = 0 ;
@@ -65,6 +64,10 @@ namespace DIGITC1
 
     public DiscreteSignal Rep ;
     
+    public double  Duration     => Rep.Duration ;
+    public int     SamplingRate => Rep.SamplingRate ;
+    public float[] Samples      => Rep.Samples ; 
+
     public WaveSignal CopyWith( DiscreteSignal aDS )
     {
       WaveSignal rCopy = new WaveSignal(aDS);
@@ -90,10 +93,10 @@ namespace DIGITC1
 
     public WaveSignal Transform( Func<float,float> Transformation ) 
     {
-      float[] lTransformedSamples = new float[Rep.Samples.Length];
-      for (int i = 0; i < Rep.Samples.Length; i++)  
-        lTransformedSamples[i] = Transformation(Rep.Samples[i]);
-      return CopyWith( new DiscreteSignal(Rep.SamplingRate, lTransformedSamples) );
+      float[] lTransformedSamples = new float[Samples.Length];
+      for (int i = 0; i < Samples.Length; i++)  
+        lTransformedSamples[i] = Transformation(Samples[i]);
+      return CopyWith( new DiscreteSignal(SamplingRate, lTransformedSamples) );
     }
 
     public override List<Signal> Segment( float aWindowSizeInSeconds ) 
@@ -102,19 +105,17 @@ namespace DIGITC1
 
       if ( aWindowSizeInSeconds > 0 )
       {
-        int lOriginalLength = Rep.Samples.Length;
-        int lSegmentLength  = (int)(Rep.SamplingRate * aWindowSizeInSeconds);
+        int lOriginalLength = Samples.Length;
+        int lSegmentLength  = (int)(SamplingRate * aWindowSizeInSeconds);
 
         int k = 0 ;
         do
         {
           float[] lSegmentSamples = new float[lSegmentLength];  
           for (int i = 0; i < lSegmentLength && k < lOriginalLength ; i++, k++)
-            lSegmentSamples[i] = Rep.Samples[k];  
+            lSegmentSamples[i] = Samples[k];  
 
-          var lSignal = CopyWith( new DiscreteSignal(Rep.SamplingRate,lSegmentSamples) );
-
-          lSignal.SegmentIdx = rList.Count; 
+          var lSignal = CopyWith( new DiscreteSignal(SamplingRate,lSegmentSamples) );
 
           rList.Add (lSignal);
         }
@@ -129,4 +130,124 @@ namespace DIGITC1
     }
   }
 
+  public abstract class Symbol : ICloneable
+  {
+    public Symbol( int aIdx ) { Idx = aIdx ; }
+
+    public abstract object Clone() ;  
+
+    public int Idx ;
+
+    public virtual string Meaning => ToString();
+  }
+
+  public class GatedSymbol : Symbol
+  {
+    public GatedSymbol( int aIdx, float aAmplitud, int aSamplingRate, int aPos, int aLength ) : base(aIdx)
+    {
+      Amplitude    = aAmplitud;
+      SamplingRate = aSamplingRate; 
+      Pos          = aPos; 
+      Length       = aLength;
+    }
+
+    public double Duration => (double)Length / (double)SamplingRate;
+
+    public override string ToString() => $"[{Duration:F2} s {(IsGap ? "Gap" : "Sym")} ({Length}|{Pos})]" ;
+
+    public override object Clone() {  return new GatedSymbol( Idx, Amplitude, SamplingRate, Pos, Length ); }  
+
+    public bool IsGap => Amplitude == 0 ;
+
+    public void DumpSamples( List<float> aSamples )
+    {
+      int lC = aSamples.Count ;
+      for( int i = lC ; i < Pos ; i++ )
+        aSamples.Add(0);
+
+      for( int i = 0; i < Length; i++ ) 
+        aSamples.Add(Amplitude);
+    }
+
+    public float Amplitude ;
+    public int   SamplingRate ;
+    public int   Pos ;
+    public int   Length ; 
+  }
+
+  public class BitSymbol : Symbol
+  {
+    public BitSymbol( int aIdx, bool aOne ) : base(aIdx) { One = aOne ; }
+
+    public override object Clone() { return new BitSymbol( Idx, One ); }  
+
+    public override string ToString() => One ? "1" : "0" ;
+
+    public bool One ;
+  }
+
+  public abstract class LexicalSignal : Signal
+  {
+    public override string ToString()
+    {
+      List<string> lAll = new List<string>();
+
+      foreach( Symbol lSymbol in EnumSymbols )
+        lAll.Add(lSymbol.ToString() );  
+
+      return String.Join( "", lAll );
+    }
+
+    public override void DoRender() {}
+
+    public abstract IEnumerable<Symbol> EnumSymbols { get ; }
+  }
+
+  public class GatedLexicalSignal : LexicalSignal
+  {
+    public GatedLexicalSignal( IEnumerable<GatedSymbol> aSymbols )
+    {
+      Symbols.AddRange(aSymbols);
+    }
+
+    public override object Clone()
+    {
+      return new GatedLexicalSignal( Symbols.ConvertAll( s => s.Clone() as GatedSymbol ) ) ;
+    }
+
+    public WaveSignal ConvertToWave()
+    { 
+      List<float> lSamples = new List<float>();  
+      foreach( GatedSymbol lSymbol in Symbols ) 
+        lSymbol.DumpSamples(lSamples);
+     
+      var rSignal = new WaveSignal( new DiscreteSignal( Symbols[0].SamplingRate, lSamples.ToArray()) ) ;
+
+      rSignal.Idx  = Idx ;
+      rSignal.Name = Name ;
+
+      return rSignal ;
+    }
+
+    public override IEnumerable<Symbol> EnumSymbols => Symbols ;
+
+    public List<GatedSymbol> Symbols = new List<GatedSymbol>();
+  }
+
+  public class BinarySignal : LexicalSignal
+  {
+    public BinarySignal( IEnumerable<BitSymbol> aSymbols )
+    {
+      Symbols.AddRange(aSymbols);
+    }
+
+    public override object Clone()
+    {
+      return new BinarySignal( Symbols.ConvertAll( s => s.Clone() as BitSymbol ) ) ;
+    }
+    public override IEnumerable<Symbol> EnumSymbols => Symbols ;
+
+    public List<BitSymbol> Symbols = new List<BitSymbol>();
+
+  }
 }
