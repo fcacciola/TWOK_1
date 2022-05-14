@@ -24,8 +24,7 @@ namespace DIGITC1
 
     public Signal ProcessSignal ( Signal aInput )
     {
-      Signal lSignal = aInput ;
-
+      List<Signal> lResults = new List<Signal>();
       List<Signal> lSegments = aInput.Segment(Context.Params.WindowSizeInSeconds);
 
       lSegments[0].Render();
@@ -45,10 +44,16 @@ namespace DIGITC1
           lCurrSignal = lModule.ProcessSignal( lSegmentIdx, lStep ++ , lCurrSignal );
         }
 
+        lResults.Add( lCurrSignal );  
+
         lSegmentIdx ++ ;
       }
 
-      return lSignal;
+      Signal lResult = Signal.Merge(lResults) ; 
+
+      Context.Output($"Output:{Environment.NewLine}{lResult}");
+
+      return lResult;
     }
 
     List<Module> mModules = new List<Module>();  

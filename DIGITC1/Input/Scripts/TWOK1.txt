@@ -4,6 +4,10 @@ envelope ( AttackTime: .01, ReleaseTime: .01, WindowSize: 100 );
 
 amplitudeGate ( Threshold: 0.5 ) ;
 
-extractGatedSymbols ( MinDuration: 0.1, MergeGap: 0.05 );
+extractGatedSymbols ( MinDuration: 0.05, MergeGap: 0.1 );
 
 binarizeByDuration( Threshold : .6 ) ;
+
+binaryToBytes( BitsPerByte: 5, LittleEndian: true) ;
+
+bytesToText( CharSet: "utf-8") ;

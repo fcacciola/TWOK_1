@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,34 +12,38 @@ using NWaves.Audio;
 using NWaves.Operations;
 using NWaves.Signals;
 
-
 namespace DIGITC1
 {
-  using BitsSignal = GenericLexicalSignal<BitSymbol>;
+  using BytesSignal = GenericLexicalSignal<ByteSymbol>;
+  using TextSignal  = GenericLexicalSignal<TextSymbol>;
 
-  public class BinarizeByDuration : LexicalModule
+  public class BytesToText : LexicalModule
   {
-    public BinarizeByDuration( double aThreshold ) : base() { mThreshold = aThreshold ; }
+    public BytesToText( string aCharSet ) : base() { mCharSet = aCharSet ; }
 
      protected override Signal ProcessLexicalSignal ( int aSegmentIdx, int aStep, LexicalSignal aInput )
      {
-       GatedLexicalSignal lGatedInput = aInput as GatedLexicalSignal ;
-       if ( lGatedInput == null )
-         throw new ArgumentException("Input Signal must be a Gated Lexical Signal");
+       BytesSignal lBytesInput = aInput as BytesSignal ;
+       if ( lBytesInput == null )
+         throw new ArgumentException("Input Signal must be a Binary Signal");
 
-       List<BitSymbol> lBits = new List<BitSymbol> ();
-             
-       double lAccDuration = 0 ;
-       lGatedInput.Symbols.ForEach( s => lAccDuration += s.Duration ) ;
-       double lAvgDuration = lAccDuration / (double)lGatedInput.Symbols.Count ;
+       Encoding lEncoding = Encoding.GetEncoding(mCharSet);
 
-       GatedSymbol lView = null ;
-       lGatedInput.Symbols.ForEach( s => lBits.Add( new BitSymbol( lBits.Count, ( s.Duration / lAvgDuration ) > mThreshold, lView )) ) ;
-   
-       BitsSignal rSignal = new BitsSignal(lBits);
+       List<TextSymbol> lTextSymbols = new List<TextSymbol> ();
+
+       byte[] lBuffer = new byte[1];
+
+       foreach( var lByteSymbol in lBytesInput.Symbols )
+       {
+         lBuffer[0] = lByteSymbol.Byte; 
+         string lText = lEncoding.GetString(lBuffer);
+         lTextSymbols.Add( new TextSymbol(lTextSymbols.Count, lText ) );
+       }
+  
+       TextSignal rSignal = new TextSignal(lTextSymbols);
 
        rSignal.Idx  = aStep + 1 ;
-       rSignal.Name = "DurationBits";
+       rSignal.Name = "Text";
 
        //WaveSignal lView = rSignal.ConvertToWave();
  
@@ -56,6 +61,6 @@ namespace DIGITC1
        return rSignal ;
     }
 
-    double mThreshold ;
+    string mCharSet ;
   }
 }

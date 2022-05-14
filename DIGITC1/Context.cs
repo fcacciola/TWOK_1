@@ -40,6 +40,7 @@ namespace DIGITC1
 
     public static bool ShouldRender( string aName )             => Instance._ShouldRender(aName);
     public static void Error       ( string aText )             => Instance._Error( aText ) ;
+    public static void Output      ( string aText )             => Instance._Output( aText ) ;
     public static void Log         ( string aText )             => Instance._Log( aText ) ;
     public static void Log         ( bool aDoIt, string aText ) => Instance._Log(aDoIt, aText ) ;
     public static void AddResults  ( string aText )             => Instance._AddResults( aText ) ;
@@ -53,11 +54,20 @@ namespace DIGITC1
 
     void _Log( string aText )
     {
+      mForm.outputBox.SelectionColor = Color.Black ;
+      mForm.outputBox.AppendText( aText + Environment.NewLine);
+    }
+
+    void _Output( string aText )
+    {
+      mForm.outputBox.SelectionColor = Color.Blue ;
+      //mForm.outputBox.SelectionFont.
       mForm.outputBox.AppendText( aText + Environment.NewLine);
     }
 
     void _Error( string aText )
     {
+      mForm.outputBox.SelectionColor = Color.Red ;
       mForm.outputBox.AppendText( aText + Environment.NewLine);
     }
 
@@ -74,7 +84,6 @@ namespace DIGITC1
 
     void _RenderWaveForm( DiscreteSignal aSignal, int aIdx, string aName, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine  )
     {
-      mForm.signalPlot1.RemoveLayer(aName);
       mForm.signalPlot1.SetLayer(aName, aIdx, aSignal, aFillColor, aLineColor, aLineThickness, aTopLine, aBottomLine);
     }
 

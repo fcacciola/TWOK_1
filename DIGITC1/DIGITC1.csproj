@@ -67,6 +67,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioSource.cs" />
+    <Compile Include="BinaryToBytes.cs" />
+    <Compile Include="BytesToText.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="AmplitudeGate.cs" />
     <Compile Include="BinarizeByDuration.cs" />

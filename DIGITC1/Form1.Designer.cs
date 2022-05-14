@@ -50,14 +50,14 @@
             this.fileToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(3690, 36);
+      this.menuStrip1.Size = new System.Drawing.Size(3690, 24);
       this.menuStrip1.TabIndex = 0;
       this.menuStrip1.Text = "menuStrip1";
       // 
       // fileToolStripMenuItem
       // 
       this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-      this.fileToolStripMenuItem.Size = new System.Drawing.Size(16, 32);
+      this.fileToolStripMenuItem.Size = new System.Drawing.Size(16, 20);
       // 
       // samplesList
       // 
@@ -128,12 +128,14 @@
       // 
       // renderListBox1
       // 
+      this.renderListBox1.CheckOnClick = true;
       this.renderListBox1.FormattingEnabled = true;
       this.renderListBox1.Location = new System.Drawing.Point(465, 51);
       this.renderListBox1.Name = "renderListBox1";
       this.renderListBox1.Size = new System.Drawing.Size(263, 303);
       this.renderListBox1.TabIndex = 12;
       this.renderListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.renderListBox1_ItemCheck);
+      this.renderListBox1.SelectedIndexChanged += new System.EventHandler(this.renderListBox1_SelectedIndexChanged);
       // 
       // signalPlot1
       // 

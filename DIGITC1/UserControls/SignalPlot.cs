@@ -25,17 +25,6 @@ namespace NWaves.DemoForms.UserControls
         /// </summary>
         public List<Layer> _layers = null ;
 
-        public void RemoveLayer ( string aName )
-        {
-          if ( _layers != null )
-          {
-            var lIdx = _layers.FindIndex( l => l._name == aName ) ;
-            if ( lIdx >= 0 )
-             _layers.RemoveAt( lIdx ) ;
-          }
-          SetupBitmap();
-        }
-
         public void SetLayer( string aName, int aIdx, DiscreteSignal aSignal, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine )
         {
           if ( _layers == null )
@@ -43,7 +32,18 @@ namespace NWaves.DemoForms.UserControls
 
           Layer lLayer = _layers.Find( l => l._name == aName ) ;
 
-          if ( lLayer == null)
+          if ( lLayer != null)
+          {
+            lLayer._name          = aName ;
+            lLayer._idx           = aIdx ;
+            lLayer._signal        = aSignal ;
+            lLayer._fillColor     = aFillColor ;  
+            lLayer._lineColor     = aLineColor ;  
+            lLayer._lineThickness = aLineThickness ;  
+            lLayer._topLine       = aTopLine ;  
+            lLayer._bottomLine    = aBottomLine ;  
+          }
+          else 
           { 
             _layers.Add( new Layer(){ _idx           = aIdx
                                     , _name          = aName
@@ -55,28 +55,43 @@ namespace NWaves.DemoForms.UserControls
                                     , _bottomLine    = aBottomLine
                                     });
 
-            _layers.Sort( delegate(Layer l1, Layer l2) {  return l1._idx.CompareTo(l2._idx) ; } );
 
           }
+
+          _layers.Sort( delegate(Layer l1, Layer l2) {  return l1._idx.CompareTo(l2._idx) ; } );
+
+          int lMaxLength = 0  ;
+          foreach ( var lL in _layers ) 
+            lMaxLength = Math.Max(lMaxLength,lL._signal.Length);
+
+          _stride = lMaxLength / Width ;
+
+          AutoScrollMinSize = new Size(lMaxLength / _stride + 20, 0);
 
           SetupBitmap();
         }
 
         void SetupBitmap()
         {
-          if ( _layers != null && _layers.Count > 0 )
-          {
-            int lMaxLength = 0  ;
-            foreach ( var lLayer in _layers ) 
-              lMaxLength = Math.Max(lMaxLength,lLayer._signal.Length);
+          List<Layer> lLayers = new List<Layer>();
 
-            AutoScrollMinSize = new Size(lMaxLength / _stride + 20, 0);
+          if ( _layers != null )
+          {
+            foreach ( var lLayer in _layers ) 
+            {
+              if ( ( this.ParentForm as DIGITC1.Form1).IsRenderModuleChecked(lLayer._name) )
+              {
+                lLayers.Add(lLayer );
+              }
+            }
           }
-          MakeBitmap();
+
+          MakeBitmap(lLayers);
           Invalidate();
         }
 
         private int _stride = 64;
+
         public int Stride
         {
             get { return _stride; }
@@ -92,6 +107,10 @@ namespace NWaves.DemoForms.UserControls
         public int PaddingX { get; set; } = 24;
         public int PaddingY { get; set; } = 5;
 
+        public void LayersChanged()
+        { 
+          SetupBitmap();
+        }
 
         public SignalPlot()
         {
@@ -102,10 +121,6 @@ namespace NWaves.DemoForms.UserControls
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
-            //if (_bmp == null && _layers != null && _layers.Count > 0 ) 
-            //  MakeBitmap();
-
             if ( _bmp != null ) 
               e.Graphics.DrawImage(_bmp, 0, 0, new Rectangle(-AutoScrollPosition.X, 0, Width, Height), GraphicsUnit.Pixel);
         }
@@ -130,7 +145,7 @@ namespace NWaves.DemoForms.UserControls
 
         private Bitmap _bmp;
 
-        private void MakeBitmap()
+        private void MakeBitmap( List<Layer> aLayers )
         {
             var width = Math.Max(AutoScrollMinSize.Width, Width);
 
@@ -151,12 +166,12 @@ namespace NWaves.DemoForms.UserControls
 
             gray.Dispose();
 
-            if (_layers != null && _layers.Count > 0)
+            if (aLayers != null && aLayers.Count > 0)
             {
                 DrawAxes(g, -(Height - 2 * PaddingY) / (2 * Gain), 
                              (Height - 2 * PaddingY) / (2 * Gain));
 
-                foreach( var lLayer in _layers )
+                foreach( var lLayer in aLayers )
                 {
                   var fillPen = new Pen(lLayer._fillColor);
                   var linePen = new Pen(lLayer._lineColor);
@@ -218,7 +233,7 @@ namespace NWaves.DemoForms.UserControls
         {
             var black = new Pen(Color.Black);
 
-            g.DrawLine(black, PaddingX, Height/2, _bmp.Width, Height/2);
+            //g.DrawLine(black, PaddingX, Height/2, _bmp.Width, Height/2);
             g.DrawLine(black, PaddingX, 10, PaddingX, Height - PaddingY);
 
             var font = new Font("arial", 5);

@@ -53,6 +53,15 @@ namespace DIGITC1
       scriptsList.EndUpdate();
     }
 
+    public void ClearRenderModules()
+    {
+      renderListBox1.BeginUpdate();
+      renderListBox1.Items.Clear();
+      renderListBox1.Items.Add( Context.InputSignal.Name );  
+      renderListBox1.SetItemChecked( renderListBox1.Items.Count - 1, true );
+      renderListBox1.EndUpdate();
+    }
+
     public void AddRenderModule( string aModule )
     {
       renderListBox1.BeginUpdate();
@@ -77,24 +86,31 @@ namespace DIGITC1
 
     private void samplesList_SelectedValueChanged(object sender, EventArgs e)
     {
-      Context.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
-      LoadInput();
+      if ( samplesList.SelectedItem != null )
+      {
+        Context.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
+        LoadInput();
+      }
     }
 
 
     private void scriptsList_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Context.ScriptFile = $"{Context.Params.ScriptsFolder}\\{scriptsList.SelectedItem.ToString()}.txt";
-
-      if ( File.Exists(Context.ScriptFile) )
+      if ( scriptsList.SelectedItem != null )
       {
-        var lSC = File.ReadAllText(Context.ScriptFile);
-        scriptBox.Text = lSC ;
+        Context.ScriptFile = $"{Context.Params.ScriptsFolder}\\{scriptsList.SelectedItem.ToString()}.txt";
+
+        if ( File.Exists(Context.ScriptFile) )
+        {
+          var lSC = File.ReadAllText(Context.ScriptFile);
+          scriptBox.Text = lSC ;
+        }
       }
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
+      ClearRenderModules();
       Start();
     }
 
@@ -111,9 +127,10 @@ namespace DIGITC1
 
         lISignal.Name = "Input";
 
-        AddRenderModule(lISignal.Name);
-
         Context.InputSignal = lISignal;
+
+        AddRenderModule(Context.InputSignal.Name);
+
         Context.InputSignal.Render();
       }
     }
@@ -131,7 +148,11 @@ namespace DIGITC1
 
     private void renderListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
     {
+    }
 
+    private void renderListBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      signalPlot1.LayersChanged();
     }
   }
 }

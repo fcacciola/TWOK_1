@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,6 +14,10 @@ using NWaves.Signals;
 
 namespace DIGITC1
 {
+  using BinarySignal = GenericLexicalSignal<BitSymbol>;
+  using BytesSignal = GenericLexicalSignal<ByteSymbol>;
+  using TextSignal = GenericLexicalSignal<TextSymbol>;
+
   public abstract class Signal : ICloneable
   {
     protected Signal()
@@ -30,6 +35,21 @@ namespace DIGITC1
     public abstract void DoRender() ;
 
     public virtual List<Signal> Segment( float aWindowSizeInSeconds ) { return new List<Signal>(){this} ; }
+
+    public static Signal Merge( List<Signal> aSegments )
+    {
+      if ( aSegments.Count == 0 ) return null;
+
+      switch ( aSegments[0] )
+      {
+        case WaveSignal         lS : return WaveSignal        .Merge(aSegments.Cast<WaveSignal        >().ToList());
+        case GatedLexicalSignal lS : return GatedLexicalSignal.Merge(aSegments.Cast<GatedLexicalSignal>().ToList());
+        case BinarySignal       lS : return BinarySignal      .Merge(aSegments.Cast<BinarySignal      >().ToList());
+        case TextSignal         lS : return TextSignal        .Merge(aSegments.Cast<TextSignal        >().ToList());
+      }
+
+      return null ;
+    }
 
     public abstract object Clone();
 
@@ -76,6 +96,17 @@ namespace DIGITC1
     }
 
     public WaveSignal Copy() => CopyWith(Rep.Copy()); 
+
+    public static WaveSignal Merge( List<WaveSignal> aSegments )
+    { 
+      if ( aSegments.Count == 0 ) return null ; 
+
+      List<float> lAllSamples = new List<float> ();
+      foreach( WaveSignal aSegment in aSegments ) 
+        lAllSamples.AddRange(aSegment.Samples);
+
+      return new WaveSignal ( new DiscreteSignal(aSegments[0].SamplingRate, lAllSamples) ); 
+    }
 
     public override object Clone() => Copy();
 
@@ -177,13 +208,37 @@ namespace DIGITC1
 
   public class BitSymbol : Symbol
   {
-    public BitSymbol( int aIdx, bool aOne ) : base(aIdx) { One = aOne ; }
+    public BitSymbol( int aIdx, bool aOne, GatedSymbol aView ) : base(aIdx) { One = aOne ; View = aView ; }
 
-    public override object Clone() { return new BitSymbol( Idx, One ); }  
+    public override object Clone() { return new BitSymbol( Idx, One, View?.Clone()  as GatedSymbol ); }  
 
     public override string ToString() => One ? "1" : "0" ;
 
     public bool One ;
+
+    public GatedSymbol View ;
+  }
+
+  public class ByteSymbol : Symbol
+  {
+    public ByteSymbol( int aIdx, byte aByte ) : base(aIdx) { Byte = aByte ; }
+
+    public override object Clone() { return new ByteSymbol( Idx, Byte ); }  
+
+    public override string ToString() => $"[{Byte.ToString():x}]" ;
+
+    public byte Byte ;
+  }
+
+  public class TextSymbol : Symbol
+  {
+    public TextSymbol( int aIdx, string aText ) : base(aIdx) { Text = aText ; }
+
+    public override object Clone() { return new TextSymbol( Idx, Text ); }  
+
+    public override string ToString() => Text ;
+
+    public string Text ;
   }
 
   public abstract class LexicalSignal : Signal
@@ -215,6 +270,17 @@ namespace DIGITC1
       return new GatedLexicalSignal( Symbols.ConvertAll( s => s.Clone() as GatedSymbol ) ) ;
     }
 
+    public static GatedLexicalSignal Merge( List<GatedLexicalSignal> aSegments )
+    { 
+      if ( aSegments.Count == 0 ) return null ; 
+
+      List<GatedSymbol> lAllSymbos = new List<GatedSymbol> ();
+      foreach( GatedLexicalSignal aSegment in aSegments ) 
+        lAllSymbos.AddRange(aSegment.Symbols);
+
+      return new GatedLexicalSignal (lAllSymbos ); 
+    }
+
     public WaveSignal ConvertToWave()
     { 
       List<float> lSamples = new List<float>();  
@@ -234,20 +300,32 @@ namespace DIGITC1
     public List<GatedSymbol> Symbols = new List<GatedSymbol>();
   }
 
-  public class BinarySignal : LexicalSignal
+  public class GenericLexicalSignal<SYM> : LexicalSignal
   {
-    public BinarySignal( IEnumerable<BitSymbol> aSymbols )
+    public GenericLexicalSignal( IEnumerable<SYM> aSymbols )
     {
       Symbols.AddRange(aSymbols);
     }
 
     public override object Clone()
     {
-      return new BinarySignal( Symbols.ConvertAll( s => s.Clone() as BitSymbol ) ) ;
+      return null ; //new GenericLexicalSignal<SYM>( Symbols.ConvertAll( s => s.Clone() as SYM ) ) ;
     }
-    public override IEnumerable<Symbol> EnumSymbols => Symbols ;
 
-    public List<BitSymbol> Symbols = new List<BitSymbol>();
+    public static GenericLexicalSignal<SYM> Merge( List<GenericLexicalSignal<SYM>> aSegments )
+    { 
+      if ( aSegments.Count == 0 ) return null ; 
+
+      List<SYM> lAllSymbos = new List<SYM> ();
+      foreach( GenericLexicalSignal<SYM> aSegment in aSegments ) 
+        lAllSymbos.AddRange(aSegment.Symbols);
+
+      return new GenericLexicalSignal<SYM>(lAllSymbos ); 
+    }
+
+    public override IEnumerable<Symbol> EnumSymbols => Symbols.Cast<Symbol>() ;
+
+    public List<SYM> Symbols = new List<SYM>();
 
   }
 }

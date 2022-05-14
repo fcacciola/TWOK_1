@@ -49,25 +49,28 @@ namespace DIGITC1
       RemoveShortSymbols();
 
       GatedLexicalSignal rSignal = new GatedLexicalSignal(mFinal);
-      //GatedLexicalSignal rSignal = new GatedLexicalSignal(mAllSymbols);
 
       rSignal.Idx  = aStep + 1 ;
       rSignal.Name = "GatedSymbols";
 
-      WaveSignal lView = rSignal.ConvertToWave();
-
-      lView.RenderFillColor  = Color.Empty ;
-      lView.RenderLineColor  = Color.FromArgb(255, Color.Black) ;
-      lView.RenderTopLine    = true ;  
-      lView.RenderBottomLine = false ; 
-
-      if ( aSegmentIdx == 0 ) 
+      if ( mFinal.Count > 0 ) 
       {
-       Context.Form.AddRenderModule(rSignal.Name);
-       lView.Render();
+        WaveSignal lView = rSignal.ConvertToWave();
+
+        lView.RenderFillColor  = Color.Empty ;
+        lView.RenderLineColor  = Color.FromArgb(255, Color.Black) ;
+        lView.RenderTopLine    = true ;  
+        lView.RenderBottomLine = false ; 
+
+        if ( aSegmentIdx == 0 ) 
+        {
+         Context.Form.AddRenderModule(rSignal.Name);
+         lView.Render();
+        }
+
+        Context.Log(aSegmentIdx==0,$"GatedSymbols View:{lView}");
       }
 
-      Context.Log(aSegmentIdx==0,$"GatedSymbols View:{lView}");
       Context.Log(aSegmentIdx==0,$"GatedSymbols:{rSignal}");
 
       return rSignal ;

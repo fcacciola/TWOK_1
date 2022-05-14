@@ -62,6 +62,17 @@ namespace DIGITC1
       mPipeline.AddModule( new BinarizeByDuration(Threshold) ); 
     }
 
+    protected void binaryToBytes( int BitsPerByte, bool LittleEndian )
+    {
+      mPipeline.AddModule( new BinaryToBytes(BitsPerByte, LittleEndian) ); 
+    }
+
+    protected void bytesToText( string CharSet )
+    {
+      mPipeline.AddModule( new BytesToText(CharSet) ); 
+
+    }
+
     Pipeline mPipeline = null;
 
   }
