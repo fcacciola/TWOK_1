@@ -72,6 +72,7 @@
     <Compile Include="Context.cs" />
     <Compile Include="AmplitudeGate.cs" />
     <Compile Include="BinarizeByDuration.cs" />
+    <Compile Include="Average.cs" />
     <Compile Include="ExtractGatedlSymbols.cs" />
     <Compile Include="Envelope.cs" />
     <Content Include="Input\Samples\Sample-10.wav">

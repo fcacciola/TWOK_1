@@ -42,14 +42,19 @@ namespace DIGITC1
       Context.Log( aS );
     }
 
-    protected void envelope( double AttackTime, double ReleaseTime, int WindowSize )
+    protected void average( int WindowSize )
     {
-      mPipeline.AddModule( new EnvelopeModule( (float)AttackTime, (float)ReleaseTime, WindowSize )) ; 
+      mPipeline.AddModule( new Average( WindowSize )) ; 
+    }
+
+    protected void envelope( double AttackTime, double ReleaseTime )
+    {
+      mPipeline.AddModule( new Envelope( (float)AttackTime, (float)ReleaseTime )) ; 
     }
 
     protected void amplitudeGate( double Threshold )
     {
-      mPipeline.AddModule( new AmplitudeGateModule( new float[1]{(float)Threshold} )); 
+      mPipeline.AddModule( new AmplitudeGate( new float[1]{(float)Threshold} )); 
     }
 
     protected void extractGatedSymbols( double MinDuration, double MergeGap )

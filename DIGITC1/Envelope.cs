@@ -13,29 +13,18 @@ using NWaves.Signals;
 
 namespace DIGITC1
 {
-  public class EnvelopeParams
-  {
-    public float AttackTime { get; set; } =  0.3f ;
-    public float ReleaseTime{ get; set; } =  0.3f ;
-    public int   WindowSize { get; set; } =  100 ;
-  }
 
-  public class EnvelopeModule : AudioInputModule
+  public class Envelope : AudioInputModule
   {
-    public EnvelopeModule( float aAttackTime, float aReleaseTime, int aWindowSize ) : base() 
+    public Envelope( float aAttackTime, float aReleaseTime ) : base() 
     { 
       mAttackTime  = aAttackTime;  
       mReleaseTime = aReleaseTime;  
-      mWindowSize  = aWindowSize;  
     }
 
     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
-      float[] lAveraged = Average(aInput.Samples, mWindowSize);
-
-      var lAVS = new DiscreteSignal(aInput.SamplingRate, lAveraged);
-
-      var lES = Operation.Envelope(lAVS, mAttackTime, mReleaseTime);
+      var lES = Operation.Envelope(aInput.Rep, mAttackTime, mReleaseTime);
 
       Signal rSignal = aInput.CopyWith(lES);
 
@@ -58,31 +47,8 @@ namespace DIGITC1
       return rSignal ;
     }
 
-    float[] Average( float[] aInput, int aWindowSize )
-    {
-      int lLen = aInput.Length ;
-
-      float[] rOutput = new float[lLen];
-
-      for (int i = 0; i < lLen; i++) 
-      {
-        float lMax = 0f ;
-
-        for (int j = 0; j < aWindowSize; j++) 
-        {
-          int k = i < j ? lLen - j : i - j ;
-          lMax = Math.Max(Math.Abs(aInput[k]), lMax);
-        }
-
-        rOutput[i] = lMax ;
-      }
-      return rOutput ;
-
-    }
-
     float mAttackTime ;
     float mReleaseTime;
-    int   mWindowSize ;
 
   }
 }

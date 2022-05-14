@@ -14,9 +14,9 @@ using NWaves.Signals;
 namespace DIGITC1
 {
  
-  public class AmplitudeGateModule : AudioInputModule
+  public class AmplitudeGate : AudioInputModule
   {
-    public AmplitudeGateModule( float[] aThresholds ) : base() { mThresholds = aThresholds ; }
+    public AmplitudeGate( float[] aThresholds ) : base() { mThresholds = aThresholds ; }
 
     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {

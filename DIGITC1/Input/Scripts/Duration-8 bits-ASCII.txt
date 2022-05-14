@@ -1,12 +1,14 @@
 print("Hello");
 
-envelope ( AttackTime: .01, ReleaseTime: .01, WindowSize: 100 );
+average ( WindowSize: 1000 );
+
+envelope ( AttackTime: .01, ReleaseTime: .01 );
 
 amplitudeGate ( Threshold: 0.5 ) ;
 
 extractGatedSymbols ( MinDuration: 0.05, MergeGap: 0.1 );
 
-binarizeByDuration( Threshold : .6 ) ;
+binarizeByDuration( Threshold : .75 ) ;
 
 binaryToBytes( BitsPerByte: 8 ) ;
 
