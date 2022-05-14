@@ -184,7 +184,9 @@ namespace DIGITC1
 
     public double Duration => (double)Length / (double)SamplingRate;
 
-    public override string ToString() => $"[{Duration:F2} s {(IsGap ? "Gap" : "Sym")} ({Length}|{Pos})]" ;
+//    public override string ToString() => $"[{Duration:F2} s {(IsGap ? "Gap" : "Sym")} ({Length}|{Pos})]{Environment.NewLine}" ;
+
+    public override string ToString() => $"[{Duration:F2} at {(double)Pos/(double)SamplingRate:F2})]{Environment.NewLine}" ;
 
     public override object Clone() {  return new GatedSymbol( Idx, Amplitude, SamplingRate, Pos, Length ); }  
 

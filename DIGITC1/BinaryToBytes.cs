@@ -19,7 +19,7 @@ namespace DIGITC1
 
   public class BinaryToBytes : LexicalModule
   {
-    public BinaryToBytes( int aBitsPerByte, bool aLittleEndian ) : base() { mLittleEndian = aLittleEndian ; mBitsPerByte = aBitsPerByte ; }
+    public BinaryToBytes( int aBitsPerByte, bool aLittleEndian = true ) : base() { mLittleEndian = aLittleEndian ; mBitsPerByte = aBitsPerByte ; }
 
      protected override Signal ProcessLexicalSignal ( int aSegmentIdx, int aStep, LexicalSignal aInput )
      {
@@ -27,39 +27,40 @@ namespace DIGITC1
        if ( lBinaryInput == null )
          throw new ArgumentException("Input Signal must be a Binary Signal");
 
-      List<bool> lBitValues  = new List<bool>(); 
+      mBitValues  = new List<bool>(); 
 
       int lLen = lBinaryInput.Symbols.Count ;
       int lByteCount = 0; 
       int i = 0;
 
+
       do
       { 
+        mDEBUG_ByteString = "" ;
+
         int lRem = lLen - i ;
 
         if ( mLittleEndian )
-        {
-          if (  mBitsPerByte < 8 )
-            for( int k = mBitsPerByte ; k < 8 ; k++ ) 
-              lBitValues.Add( false ) ;
-
-          if ( lRem < mBitsPerByte )
-            for( int k = lRem ; k < mBitsPerByte ; k++ ) 
-              lBitValues.Add( false ) ;
-        }
+          AddPadding();
 
         for ( int j = 0 ; i < lLen && j < mBitsPerByte ; j++, i ++ )
-          lBitValues.Add( lBinaryInput.Symbols[i].One ) ;  
+        {
+          mDEBUG_ByteString += $"[{(lBinaryInput.Symbols[i].One ? "1" : "0")}]";
+          mBitValues.Add( lBinaryInput.Symbols[i].One ) ;  
+        }
+        
+        AddRemainder(lRem);
 
-        //if ( !mLittleEndian && mBitsPerByte < 8 )
-        //  for( int k = mBitsPerByte ; k < 8 ; k++ ) 
-        //    lBitValues.Add( false ) ;
+        if ( !mLittleEndian )
+          AddPadding();
+
+        Context.Log(aSegmentIdx==0,mDEBUG_ByteString+Environment.NewLine);
 
         lByteCount ++ ;
       }
       while ( i < lLen ) ;
 
-      BitArray lBits = new BitArray(lBitValues.ToArray());
+      BitArray lBits = new BitArray(mBitValues.ToArray());
         
       byte[] lBytes = new byte[lByteCount]; 
       lBits.CopyTo( lBytes, 0 ) ;
@@ -85,12 +86,42 @@ namespace DIGITC1
       //lView.Render();
  
       //Context.Log(aSegmentIdx==0,$"Duration-based Bits View:{lView}");
-      Context.Log($"Bytes Bits:{rSignal}");
+      Context.Log($"Bytes:{rSignal}");
  
        return rSignal ;
     }
 
+    void AddPadding()
+    {
+      if (  mBitsPerByte < 8 )
+      {
+        for( int k = mBitsPerByte ; k < 8 ; k++ ) 
+        {
+          mDEBUG_ByteString += $"[P:0]";
+          mBitValues.Add( false ) ;
+        }
+
+      }
+    }
+
+    void AddRemainder( int aRem )
+    {
+      if ( aRem < mBitsPerByte )
+      {
+        for( int k = aRem ; k < mBitsPerByte ; k++ ) 
+        {
+          mDEBUG_ByteString += $"[R:0]";
+          mBitValues.Add( false ) ;
+        }
+      }
+    }
+
     bool mLittleEndian ;
     int  mBitsPerByte ;
+
+    List<bool> mBitValues ;
+
+    string mDEBUG_ByteString ;
+
   }
 }

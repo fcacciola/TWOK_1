@@ -75,24 +75,25 @@
       this.scriptsList.ItemHeight = 20;
       this.scriptsList.Location = new System.Drawing.Point(25, 437);
       this.scriptsList.Name = "scriptsList";
-      this.scriptsList.Size = new System.Drawing.Size(268, 1204);
+      this.scriptsList.Size = new System.Drawing.Size(370, 1204);
       this.scriptsList.TabIndex = 6;
       this.scriptsList.SelectedIndexChanged += new System.EventHandler(this.scriptsList_SelectedIndexChanged);
       // 
       // scriptBox
       // 
       this.scriptBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.scriptBox.Location = new System.Drawing.Point(299, 437);
+      this.scriptBox.Location = new System.Drawing.Point(401, 437);
       this.scriptBox.Multiline = true;
       this.scriptBox.Name = "scriptBox";
-      this.scriptBox.Size = new System.Drawing.Size(1612, 1201);
+      this.scriptBox.Size = new System.Drawing.Size(1510, 1201);
       this.scriptBox.TabIndex = 7;
       // 
       // outputBox
       // 
+      this.outputBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+      this.outputBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.outputBox.Location = new System.Drawing.Point(1917, 437);
       this.outputBox.Name = "outputBox";
-      this.outputBox.ReadOnly = true;
       this.outputBox.Size = new System.Drawing.Size(1761, 1201);
       this.outputBox.TabIndex = 8;
       this.outputBox.Text = "";

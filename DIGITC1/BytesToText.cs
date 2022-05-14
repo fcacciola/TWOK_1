@@ -56,8 +56,7 @@ namespace DIGITC1
        //lView.Render();
  
        //Context.Log(aSegmentIdx==0,$"Duration-based Bits View:{lView}");
-       Context.Log($"Duration-based Bits:{rSignal}");
- 
+
        return rSignal ;
     }
 

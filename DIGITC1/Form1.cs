@@ -104,6 +104,7 @@ namespace DIGITC1
         {
           var lSC = File.ReadAllText(Context.ScriptFile);
           scriptBox.Text = lSC ;
+          outputBox.Text = "" ;
         }
       }
     }

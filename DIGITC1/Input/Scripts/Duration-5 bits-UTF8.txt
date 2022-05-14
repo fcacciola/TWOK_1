@@ -8,6 +8,6 @@ extractGatedSymbols ( MinDuration: 0.05, MergeGap: 0.1 );
 
 binarizeByDuration( Threshold : .6 ) ;
 
-binaryToBytes( BitsPerByte: 5, LittleEndian: true) ;
+binaryToBytes( BitsPerByte: 5 ) ;
 
 bytesToText( CharSet: "utf-8") ;

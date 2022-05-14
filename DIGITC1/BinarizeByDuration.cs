@@ -26,29 +26,45 @@ namespace DIGITC1
        if ( lGatedInput == null )
          throw new ArgumentException("Input Signal must be a Gated Lexical Signal");
 
-       List<BitSymbol> lBits = new List<BitSymbol> ();
+       List<BitSymbol>   lBits     = new List<BitSymbol>   ();
+       List<GatedSymbol> lBitViews = new List<GatedSymbol> ();
              
        double lAccDuration = 0 ;
        lGatedInput.Symbols.ForEach( s => lAccDuration += s.Duration ) ;
        double lAvgDuration = lAccDuration / (double)lGatedInput.Symbols.Count ;
 
-       GatedSymbol lView = null ;
-       lGatedInput.Symbols.ForEach( s => lBits.Add( new BitSymbol( lBits.Count, ( s.Duration / lAvgDuration ) > mThreshold, lView )) ) ;
+       foreach ( GatedSymbol lGI in lGatedInput.Symbols ) 
+       {
+         bool lOne = ( lGI.Duration / lAvgDuration ) > mThreshold ;
+
+         GatedSymbol lViewSym = lGI.Clone() as GatedSymbol ;
+         lViewSym.Amplitude = lOne ? - lGI.Amplitude * 0.5f : - lGI.Amplitude * 0.2f;
+         lBitViews.Add( lViewSym ) ; 
+
+         lBits.Add( new BitSymbol( lBits.Count, lOne, lViewSym )) ;
+
+       }
    
        BitsSignal rSignal = new BitsSignal(lBits);
 
        rSignal.Idx  = aStep + 1 ;
        rSignal.Name = "DurationBits";
 
-       //WaveSignal lView = rSignal.ConvertToWave();
+       GatedLexicalSignal lViewGS = new GatedLexicalSignal(lBitViews) ;
+       WaveSignal lView = lViewGS.ConvertToWave();
  
-       //lView.Idx              = aStep + 1 ;
-       //lView.Name             = "DurationBits";
-       //lView.RenderFillColor  = Color.Empty ;
-       //lView.RenderLineColor  = Color.Black ;
-       //lView.RenderTopLine    = true ;  
-       //lView.RenderBottomLine = false ;  
-       //lView.Render();
+       lView.Idx              = aStep + 1 ;
+       lView.Name             = "DurationBits";
+       lView.RenderFillColor  = Color.Empty ;
+       lView.RenderLineColor  = Color.BlueViolet ;
+       lView.RenderTopLine    = false ;  
+       lView.RenderBottomLine = true ;  
+
+       if ( aSegmentIdx == 0 ) 
+       {
+         Context.Form.AddRenderModule(lView.Name);
+         lView.Render();
+       }
  
        //Context.Log(aSegmentIdx==0,$"Duration-based Bits View:{lView}");
        Context.Log($"Duration-based Bits:{rSignal}");

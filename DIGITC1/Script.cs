@@ -62,7 +62,7 @@ namespace DIGITC1
       mPipeline.AddModule( new BinarizeByDuration(Threshold) ); 
     }
 
-    protected void binaryToBytes( int BitsPerByte, bool LittleEndian )
+    protected void binaryToBytes( int BitsPerByte, bool LittleEndian = true )
     {
       mPipeline.AddModule( new BinaryToBytes(BitsPerByte, LittleEndian) ); 
     }
