@@ -33,9 +33,12 @@ namespace DIGITC1
        lGatedInput.Symbols.ForEach( s => lAccDuration += s.Duration ) ;
        double lAvgDuration = lAccDuration / (double)lGatedInput.Symbols.Count ;
 
+       double lMaxDuration = 0 ;
+       lGatedInput.Symbols.ForEach( s => { if ( s.Duration < 3 * lAvgDuration ) lMaxDuration = Math.Max(s.Duration, lMaxDuration) ; } ) ;
+
        foreach ( GatedSymbol lGI in lGatedInput.Symbols ) 
        {
-         bool lOne = ( lGI.Duration / lAvgDuration ) > mThreshold ;
+         bool lOne = ( lGI.Duration / lMaxDuration ) > mThreshold ;
 
          GatedSymbol lViewSym = lGI.Clone() as GatedSymbol ;
          lViewSym.Amplitude = lOne ? - lGI.Amplitude * 0.5f : - lGI.Amplitude * 0.2f;

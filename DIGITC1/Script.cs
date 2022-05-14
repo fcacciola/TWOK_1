@@ -42,9 +42,9 @@ namespace DIGITC1
       Context.Log( aS );
     }
 
-    protected void average( int WindowSize )
+    protected void average( int WindowSize, int Iterations )
     {
-      mPipeline.AddModule( new Average( WindowSize )) ; 
+      mPipeline.AddModule( new Average( WindowSize, Iterations )) ; 
     }
 
     protected void envelope( double AttackTime, double ReleaseTime )

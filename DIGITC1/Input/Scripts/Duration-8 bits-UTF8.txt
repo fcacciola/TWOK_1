@@ -1,0 +1,15 @@
+print("Hello");
+
+average ( WindowSize: 50, Iterations: 2 );
+
+envelope ( AttackTime: .1, ReleaseTime: .1 );
+
+amplitudeGate ( Threshold: 0.65 ) ;
+
+extractGatedSymbols ( MinDuration: 0.05, MergeGap: 0.1 );
+
+binarizeByDuration( Threshold : .4 ) ;
+
+binaryToBytes( BitsPerByte: 8 ) ;
+
+bytesToText( CharSet: "utf-8") ;

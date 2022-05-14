@@ -89,6 +89,7 @@ namespace DIGITC1
       if ( samplesList.SelectedItem != null )
       {
         Context.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
+        outputBox.Text = "" ;
         LoadInput();
       }
     }
@@ -111,6 +112,7 @@ namespace DIGITC1
 
     private void button1_Click(object sender, EventArgs e)
     {
+      outputBox.Text = "" ;
       ClearRenderModules();
       Start();
     }
@@ -130,7 +132,8 @@ namespace DIGITC1
 
         Context.InputSignal = lISignal;
 
-        AddRenderModule(Context.InputSignal.Name);
+        ClearRenderModules();
+        //AddRenderModule(Context.InputSignal.Name);
 
         Context.InputSignal.Render();
       }

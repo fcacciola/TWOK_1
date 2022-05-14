@@ -15,14 +15,15 @@ namespace DIGITC1
 {
   public class Average : AudioInputModule
   {
-    public Average( int aWindowSize ) : base() 
+    public Average( int aWindowSize, int aIterations ) : base() 
     { 
       mWindowSize  = aWindowSize;  
+      mIterations  = aIterations;  
     }
 
     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
-      float[] lAveraged = AverageSamples(aInput.Samples, mWindowSize);
+      float[] lAveraged = AverageSamples(aInput.Samples);
 
       var lAVS = new DiscreteSignal(aInput.SamplingRate, lAveraged);
 
@@ -47,31 +48,40 @@ namespace DIGITC1
       return rSignal ;
     }
 
-    float[] AverageSamples( float[] aInput, int aWindowSize )
+    float[] AverageSamples( float[] aSamples)
     {
-      int lLen = aInput.Length ;
+      int lLen = aSamples.Length ;
+
+      float[] lInput  = new float[lLen];
+      aSamples.CopyTo(lInput, 0);
 
       float[] rOutput = new float[lLen];
 
-      for (int i = 0; i < lLen; i++) 
+      for ( int c = 0 ; c < mIterations ; c++ )
       {
-        float lMax = 0f ;
-
-        for (int j = 0; j < aWindowSize; j++) 
+        for (int i = 0; i < lLen; i++) 
         {
-          int k = i < j ? lLen - j : i - j ;
-          lMax = Math.Max(Math.Abs(aInput[k]), lMax);
-        }
+          float lMax = 0f ;
 
-        rOutput[i] = lMax ;
+          for (int j = 0; j < mWindowSize; j++) 
+          {
+            int k = i < j ? lLen - j : i - j ;
+            lMax = Math.Max(Math.Abs(lInput[k]), lMax);
+          }
+
+          rOutput[i] = lMax ;
+        }
+    
+        if ( c - 1 < mIterations)
+          rOutput.CopyTo(lInput, 0);
       }
+
       return rOutput ;
 
     }
 
-    float mAttackTime ;
-    float mReleaseTime;
-    int   mWindowSize ;
+    int mWindowSize ;
+    int mIterations ;
 
   }
 }

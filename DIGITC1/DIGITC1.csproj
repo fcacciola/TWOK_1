@@ -161,7 +161,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
-    <Content Include="Input\Scripts\Duration-8 bits-ASCII.txt">
+    <Content Include="Input\Scripts\Duration-8 bits-UTF8.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Input\Scripts\Just-Envelope.txt">
@@ -215,7 +215,7 @@
     <Content Include="Input\Samples\Sample-1.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Input\Scripts\Duration-5 bits-UTF8.txt">
+    <Content Include="Input\Scripts\Duration-5 bits-ASCII.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

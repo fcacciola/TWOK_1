@@ -1,6 +1,6 @@
 print("Hello");
 
-average ( WindowSize: 1000 );
+average ( WindowSize: 50, Iterations: 2 );
 
-envelope ( AttackTime: .01, ReleaseTime: .01 );
+envelope ( AttackTime: .1, ReleaseTime: .1 );
 
