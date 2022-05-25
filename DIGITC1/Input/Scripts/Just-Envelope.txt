@@ -1,4 +1,4 @@
-print("Hello");
+print("Average -> Envelope only");
 
 average ( WindowSize: 50, Iterations: 2 );
 

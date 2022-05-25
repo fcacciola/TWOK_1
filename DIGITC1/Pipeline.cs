@@ -70,7 +70,7 @@ namespace DIGITC1
 
       Signal lResult = Signal.Merge(lResults) ; 
 
-      Context.Output($"Output:{Environment.NewLine}{lResult}");
+      Context.Output(lResult.ToString());
 
       return lResult;
     }

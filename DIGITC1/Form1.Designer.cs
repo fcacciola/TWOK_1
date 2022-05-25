@@ -39,6 +39,7 @@
       this.button3 = new System.Windows.Forms.Button();
       this.renderListBox1 = new System.Windows.Forms.CheckedListBox();
       this.signalPlot1 = new NWaves.DemoForms.UserControls.SignalPlot();
+      this.sessionNameBox = new System.Windows.Forms.TextBox();
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -153,11 +154,20 @@
       this.signalPlot1.Stride = 64;
       this.signalPlot1.TabIndex = 4;
       // 
+      // sessionNameBox
+      // 
+      this.sessionNameBox.Location = new System.Drawing.Point(2049, 397);
+      this.sessionNameBox.Name = "sessionNameBox";
+      this.sessionNameBox.Size = new System.Drawing.Size(432, 26);
+      this.sessionNameBox.TabIndex = 13;
+      this.sessionNameBox.Text = "DEFAULT";
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(3690, 1650);
+      this.Controls.Add(this.sessionNameBox);
       this.Controls.Add(this.renderListBox1);
       this.Controls.Add(this.button3);
       this.Controls.Add(this.button2);
@@ -193,6 +203,7 @@
     private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Button button3;
     public System.Windows.Forms.CheckedListBox renderListBox1;
+    public System.Windows.Forms.TextBox sessionNameBox;
   }
 }
 

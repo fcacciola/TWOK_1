@@ -1,4 +1,4 @@
-print("Hello");
+print("Duration-based Keying. 5 bits per byte. Little Endian. ASCII Encoding.");
 
 average ( WindowSize: 50, Iterations: 2 );
 

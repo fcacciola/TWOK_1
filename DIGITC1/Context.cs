@@ -18,6 +18,13 @@ namespace DIGITC1
     Context( Form1 aForm )
     {
       mForm = aForm;  
+
+      if ( ! Directory.Exists(@".\Output") )
+        Directory.CreateDirectory(@".\Output");
+
+      mLogFilePath = $".\\Output\\Session_log_{DateTime.Now.ToFileTimeUtc()}.txt";
+
+      File.AppendAllText(mLogFilePath,"DIGITC v1.0" + Environment.NewLine, Encoding.UTF8);
     }
 
     public static void Create( Form1 aForm )
@@ -40,37 +47,60 @@ namespace DIGITC1
 
     static public Form1 Form { get { return Instance.mForm ; } }
 
-    public static bool ShouldRender( string aName )             => Instance._ShouldRender(aName);
-    public static void Error       ( string aText )             => Instance._Error( aText ) ;
-    public static void Output      ( string aText )             => Instance._Output( aText ) ;
-    public static void Log         ( string aText )             => Instance._Log( aText ) ;
-    public static void Log         ( bool aDoIt, string aText ) => Instance._Log(aDoIt, aText ) ;
-    public static void AddResults  ( string aText )             => Instance._AddResults( aText ) ;
+    public static bool ShouldRender   ( string aName )                   => Instance._ShouldRender(aName);
+    public static void Error          ( string aText )                   => Instance._Error( aText ) ;
+    public static void Output         ( string aText )                   => Instance._Output( aText ) ;
+    public static void Log            ( string aText )                   => Instance._Log( aText ) ;
+    public static void Log            ( bool aDoIt, string aText )       => Instance._Log(aDoIt, aText ) ;
+    public static void AddResults     ( string aText )                   => Instance._AddResults( aText ) ;
+    public static void LogSessionStart( string aName, string aComments ) => Instance._LogSessionStart(aName, aComments);
 
     public static void RenderWaveForm   ( DiscreteSignal aSignal, int aIdx, string aName, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine ) 
       => Instance._RenderWaveForm( aSignal, aIdx, aName, aFillColor, aLineColor, aLineThickness, aTopLine, aBottomLine ) ;  
 
     public static Params Params {  get { return Instance.mParams ;} set { Instance.mParams = value ; } }
 
+    void _LogSessionStart( string aName, string aComments )
+    {
+      using ( StreamWriter lWriter = File.AppendText(mLogFilePath) )  
+      {
+        lWriter.WriteLine( $"Session {aName } started on Date {DateTime.Now.ToLongDateString()} at Time {DateTime.Now.ToLongTimeString()}");
+
+        if ( aComments != "" )
+          lWriter.WriteLine( aComments );
+      }
+    }
+
     bool _ShouldRender( string aName ) => mForm.IsRenderModuleChecked(aName);
 
     void _Log( string aText )
     {
+      string lText = aText + Environment.NewLine ;
+
       mForm.outputBox.SelectionColor = Color.Black ;
-      mForm.outputBox.AppendText( aText + Environment.NewLine);
+      mForm.outputBox.AppendText(lText );
+
+      File.AppendAllText(mLogFilePath, lText ) ;  
     }
 
     void _Output( string aText )
     {
+      string lText = $"{Environment.NewLine}OUTPUT:{Environment.NewLine}[{aText}]{Environment.NewLine}{Environment.NewLine}" ;
+
       mForm.outputBox.SelectionColor = Color.Blue ;
       //mForm.outputBox.SelectionFont.
-      mForm.outputBox.AppendText( aText + Environment.NewLine);
+      mForm.outputBox.AppendText( lText );
+
+      File.AppendAllText(mLogFilePath, lText ) ;  
     }
 
     void _Error( string aText )
     {
+      string lText = $"{Environment.NewLine}ERROR:{Environment.NewLine}{aText}{Environment.NewLine}" ;
       mForm.outputBox.SelectionColor = Color.Red ;
-      mForm.outputBox.AppendText( aText + Environment.NewLine);
+      mForm.outputBox.AppendText( lText ) ;
+
+      File.AppendAllText(mLogFilePath, lText ) ;  
     }
 
     void _Log( bool aDoIt, string aText )
@@ -89,6 +119,7 @@ namespace DIGITC1
       mForm.signalPlot1.SetLayer(aName, aIdx, aSignal, aFillColor, aLineColor, aLineThickness, aTopLine, aBottomLine);
     }
 
+    string       mLogFilePath ;
     string       mInputSample    ;
     string       mScriptFile     ;
     string       mScriptContents ;

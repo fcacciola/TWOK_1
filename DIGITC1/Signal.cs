@@ -112,7 +112,7 @@ namespace DIGITC1
 
     public override string ToString()
     {
-      return $"Duiration:{Rep.Duration} SampleRate:{Rep.SamplingRate}{Environment.NewLine}Samples:[{Utils.ToStr(Rep.Samples)}]";
+      return $"Duration:{Rep.Duration:F2} seconds. SampleRate:{Rep.SamplingRate}.{Environment.NewLine}Samples:[{Utils.ToStr(Rep.Samples)}]";
     }
 
     public override void DoRender()

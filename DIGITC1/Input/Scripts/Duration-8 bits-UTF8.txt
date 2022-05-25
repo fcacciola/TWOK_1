@@ -1,4 +1,4 @@
-print("Hello");
+print("Duration-based Keying. 8 bits per byte. Little Endian. UTF-8 Encoding.");
 
 average ( WindowSize: 50, Iterations: 2 );
 

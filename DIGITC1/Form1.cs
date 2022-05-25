@@ -30,7 +30,6 @@ namespace DIGITC1
       LoadScripts();
 
       Context.BaseScriptContents = File.ReadAllText(@".\Input\Scripts\BaseScript.cs");
-
     }
 
     void LoadSamples()
@@ -108,6 +107,7 @@ namespace DIGITC1
           scriptBox.Text = lSC ;
           outputBox.Text = "" ;
           Context.Pipeline.Clear(); 
+          Context.Log($"Script [{Path.GetFileNameWithoutExtension(Context.ScriptFile)}] loaded.");
         }
       }
     }
@@ -138,6 +138,9 @@ namespace DIGITC1
         //AddRenderModule(Context.InputSignal.Name);
 
         Context.InputSignal.Render();
+
+        Context.LogSessionStart(sessionNameBox.Text,"");
+        Context.Log($"Sample [{Path.GetFileName(Context.InputSample)}] loaded.");
       }
     }
 
@@ -145,6 +148,7 @@ namespace DIGITC1
     {
       if ( Context.InputSignal != null )
       {
+        Context.Log("Running Script..." + Environment.NewLine);
         Context.Pipeline.Start();
         Context.ScriptDriver.Run(Context.Pipeline, scriptBox.Text);
       }
