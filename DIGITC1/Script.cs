@@ -18,11 +18,11 @@ namespace DIGITC1
 {
   public abstract class ScriptBase
   {
-    public void DoRun()
+    public void DoRun( Pipeline aPipeline )
     {
       try
       { 
-        mPipeline = new Pipeline();
+        mPipeline = aPipeline;
 
         UserCode();
 
@@ -87,7 +87,7 @@ namespace DIGITC1
   {
     public ScriptDriver() {}
 
-    public void Run( string aUserCode )
+    public void Run( Pipeline aPipeline, string aUserCode )
     {
       CSharpCodeProvider lProvider   = new CSharpCodeProvider();
       CompilerParameters lParameters = new CompilerParameters();
@@ -114,7 +114,7 @@ namespace DIGITC1
 
         var lCVSRunMethod = lCVSType.GetMethod( "Run" ) ;
 
-        lCVSRunMethod.Invoke( null, new object[]{} ) ;
+        lCVSRunMethod.Invoke( null, new object[]{aPipeline} ) ;
       }
     }
   }

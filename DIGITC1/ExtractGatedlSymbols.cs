@@ -18,7 +18,9 @@ namespace DIGITC1
   {
     public ExtractGatedlSymbols( float aMinDuration, float aMergeGap ) : base() { mMinDuration = aMinDuration ; mMergeGap = aMergeGap ; }
 
-     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
+    public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mMinDuration, mMergeGap ); }
+
+    protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
       mInput      = aInput ; 
       mAllSymbols = new List<GatedSymbol>();
@@ -48,32 +50,37 @@ namespace DIGITC1
 
       RemoveShortSymbols();
 
-      GatedLexicalSignal rSignal = new GatedLexicalSignal(mFinal);
+      mResult = new GatedLexicalSignal(mFinal);
 
-      rSignal.Idx  = aStep + 1 ;
-      rSignal.Name = "GatedSymbols";
+      mResult.Idx  = aStep + 1 ;
+      mResult.Name = "GatedSymbols";
 
       if ( mFinal.Count > 0 ) 
       {
-        WaveSignal lView = rSignal.ConvertToWave();
+        mView = (mResult as GatedLexicalSignal).ConvertToWave();
 
-        lView.RenderFillColor  = Color.Empty ;
-        lView.RenderLineColor  = Color.FromArgb(255, Color.Black) ;
-        lView.RenderTopLine    = true ;  
-        lView.RenderBottomLine = false ; 
-
-        if ( aSegmentIdx == 0 ) 
-        {
-         Context.Form.AddRenderModule(rSignal.Name);
-         lView.Render();
-        }
-
-        Context.Log(aSegmentIdx==0,$"GatedSymbols View:{lView}");
+        mView.RenderFillColor  = Color.Empty ;
+        mView.RenderLineColor  = Color.FromArgb(255, Color.Black) ;
+        mView.RenderTopLine    = true ;  
+        mView.RenderBottomLine = false ; 
+ 
       }
 
-      Context.Log(aSegmentIdx==0,$"GatedSymbols:{rSignal}");
+      return mResult ;
+    }
 
-      return rSignal ;
+    public override void ShowResult ( int aSegmentIdx,  int aStep )
+    {
+      if ( mView != null ) 
+      {
+        if ( aSegmentIdx == 0 ) 
+        {
+         Context.Form.AddRenderModule(mResult.Name);
+         mView.Render();
+        }
+      }
+
+      Context.Log(aSegmentIdx==0,$"GatedSymbols:{mResult}");
     }
 
     void AddSymbol()
@@ -143,5 +150,7 @@ namespace DIGITC1
     List<GatedSymbol> mAllSymbols ;
     List<GatedSymbol> mMerged ;
     List<GatedSymbol> mFinal ;
+
+    WaveSignal mView ;
   }
 }

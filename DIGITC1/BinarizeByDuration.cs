@@ -20,6 +20,8 @@ namespace DIGITC1
   {
     public BinarizeByDuration( double aThreshold ) : base() { mThreshold = aThreshold ; }
 
+     public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mThreshold); }
+
      protected override Signal ProcessLexicalSignal ( int aSegmentIdx, int aStep, LexicalSignal aInput )
      {
        GatedLexicalSignal lGatedInput = aInput as GatedLexicalSignal ;
@@ -48,33 +50,41 @@ namespace DIGITC1
 
        }
    
-       BitsSignal rSignal = new BitsSignal(lBits);
+       mResult = new BitsSignal(lBits);
 
-       rSignal.Idx  = aStep + 1 ;
-       rSignal.Name = "DurationBits";
+       mResult.Idx  = aStep + 1 ;
+       mResult.Name = "DurationBits";
 
-       GatedLexicalSignal lViewGS = new GatedLexicalSignal(lBitViews) ;
-       WaveSignal lView = lViewGS.ConvertToWave();
+       mViewGS = new GatedLexicalSignal(lBitViews) ;
+       mView   = mViewGS.ConvertToWave();
  
-       lView.Idx              = aStep + 1 ;
-       lView.Name             = "DurationBits";
-       lView.RenderFillColor  = Color.Empty ;
-       lView.RenderLineColor  = Color.BlueViolet ;
-       lView.RenderTopLine    = false ;  
-       lView.RenderBottomLine = true ;  
+       mView.Idx              = aStep + 1 ;
+       mView.Name             = "DurationBits";
+       mView.RenderFillColor  = Color.Empty ;
+       mView.RenderLineColor  = Color.BlueViolet ;
+       mView.RenderTopLine    = false ;  
+       mView.RenderBottomLine = true ;  
 
+       return mResult ;
+     }
+
+     public override void ShowResult ( int aSegmentIdx, int aStep )
+     {
        if ( aSegmentIdx == 0 ) 
        {
-         Context.Form.AddRenderModule(lView.Name);
-         lView.Render();
+         Context.Form.AddRenderModule(mView.Name);
+         mView.Render();
        }
  
        //Context.Log(aSegmentIdx==0,$"Duration-based Bits View:{lView}");
-       Context.Log($"Duration-based Bits:{rSignal}");
- 
-       return rSignal ;
+       Context.Log($"Duration-based Bits:{mResult}");
     }
 
     double mThreshold ;
+
+    GatedLexicalSignal mViewGS ;
+    WaveSignal         mView;
+
   }
+
 }

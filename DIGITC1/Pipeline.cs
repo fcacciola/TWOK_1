@@ -17,9 +17,28 @@ namespace DIGITC1
   {
     public Pipeline() {}  
 
+    public void Clear()
+    {
+      mModulesCache.Clear();
+    }
+
+    public void Start()
+    {
+      mModules.Clear();
+    }
+
     public void AddModule( Module aModule )
     { 
-      mModules.Add( aModule ); 
+      ModuleSignature lSignature = aModule.GetSignature();
+      if ( ! mModulesCache.ContainsKey(lSignature.Value) )
+      {
+        mModulesCache.Add(lSignature.Value, aModule);
+        mModules.Add(aModule);
+      }
+      else
+      {
+        mModules.Add(mModulesCache[lSignature.Value]);
+      }
     }
 
     public Signal ProcessSignal ( Signal aInput )
@@ -57,6 +76,8 @@ namespace DIGITC1
     }
 
     List<Module> mModules = new List<Module>();  
+
+    Dictionary<string,Module> mModulesCache = new Dictionary<string, Module>();
   }
 
 }

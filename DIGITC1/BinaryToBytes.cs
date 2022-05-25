@@ -21,6 +21,8 @@ namespace DIGITC1
   {
     public BinaryToBytes( int aBitsPerByte, bool aLittleEndian = true ) : base() { mLittleEndian = aLittleEndian ; mBitsPerByte = aBitsPerByte ; }
 
+     public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mLittleEndian, mBitsPerByte); }
+
      protected override Signal ProcessLexicalSignal ( int aSegmentIdx, int aStep, LexicalSignal aInput )
      {
        BitsSignal lBinaryInput = aInput as BitsSignal ;
@@ -70,25 +72,17 @@ namespace DIGITC1
       foreach( byte lByte in lBytes )
         lByteSymbols.Add( new ByteSymbol(lByteSymbols.Count, lByte ) ) ;
 
-      BytesSignal rSignal = new BytesSignal(lByteSymbols);
+      mResult = new BytesSignal(lByteSymbols);
 
-      rSignal.Idx  = aStep + 1 ;
-      rSignal.Name = "Bytes";
+      mResult.Idx  = aStep + 1 ;
+      mResult.Name = "Bytes";
 
-      //WaveSignal lView = rSignal.ConvertToWave();
- 
-      //lView.Idx              = aStep + 1 ;
-      //lView.Name             = "DurationBits";
-      //lView.RenderFillColor  = Color.Empty ;
-      //lView.RenderLineColor  = Color.Black ;
-      //lView.RenderTopLine    = true ;  
-      //lView.RenderBottomLine = false ;  
-      //lView.Render();
- 
-      //Context.Log(aSegmentIdx==0,$"Duration-based Bits View:{lView}");
-      Context.Log($"Bytes:{rSignal}");
- 
-       return rSignal ;
+      return mResult ;
+    }
+
+    public override void ShowResult ( int aSegmentIdx, int aStep )
+    {
+      Context.Log(aSegmentIdx==0, $"Bytes:{mResult}");
     }
 
     void AddPadding()

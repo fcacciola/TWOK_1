@@ -9,10 +9,10 @@ namespace DIGITC1
 
 public class Script : ScriptBase
 {
-  public static void Run()
+  public static void Run( Pipeline aPipeline )
   {
     Script script = new Script();
-    script.DoRun(); 
+    script.DoRun(aPipeline); 
   }
 
   public override void UserCode()

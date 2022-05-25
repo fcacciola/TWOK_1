@@ -91,6 +91,7 @@ namespace DIGITC1
         Context.InputSample = $"{Context.Params.SamplesFolder}\\{samplesList.SelectedItem.ToString()}";
         outputBox.Text = "" ;
         LoadInput();
+        Context.Pipeline.Clear(); 
       }
     }
 
@@ -106,6 +107,7 @@ namespace DIGITC1
           var lSC = File.ReadAllText(Context.ScriptFile);
           scriptBox.Text = lSC ;
           outputBox.Text = "" ;
+          Context.Pipeline.Clear(); 
         }
       }
     }
@@ -142,7 +144,10 @@ namespace DIGITC1
     void Start()
     {
       if ( Context.InputSignal != null )
-        Context.ScriptDriver.Run(scriptBox.Text);
+      {
+        Context.Pipeline.Start();
+        Context.ScriptDriver.Run(Context.Pipeline, scriptBox.Text);
+      }
     }
 
     private void button3_Click(object sender, EventArgs e)

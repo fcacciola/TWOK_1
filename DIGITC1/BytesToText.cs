@@ -21,6 +21,8 @@ namespace DIGITC1
   {
     public BytesToText( string aCharSet ) : base() { mCharSet = aCharSet ; }
 
+     public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mCharSet); }
+
      protected override Signal ProcessLexicalSignal ( int aSegmentIdx, int aStep, LexicalSignal aInput )
      {
        BytesSignal lBytesInput = aInput as BytesSignal ;
@@ -40,24 +42,12 @@ namespace DIGITC1
          lTextSymbols.Add( new TextSymbol(lTextSymbols.Count, lText ) );
        }
   
-       TextSignal rSignal = new TextSignal(lTextSymbols);
+       mResult = new TextSignal(lTextSymbols);
 
-       rSignal.Idx  = aStep + 1 ;
-       rSignal.Name = "Text";
+       mResult.Idx  = aStep + 1 ;
+       mResult.Name = "Text";
 
-       //WaveSignal lView = rSignal.ConvertToWave();
- 
-       //lView.Idx              = aStep + 1 ;
-       //lView.Name             = "DurationBits";
-       //lView.RenderFillColor  = Color.Empty ;
-       //lView.RenderLineColor  = Color.Black ;
-       //lView.RenderTopLine    = true ;  
-       //lView.RenderBottomLine = false ;  
-       //lView.Render();
- 
-       //Context.Log(aSegmentIdx==0,$"Duration-based Bits View:{lView}");
-
-       return rSignal ;
+       return mResult ;
     }
 
     string mCharSet ;

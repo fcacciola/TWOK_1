@@ -22,29 +22,34 @@ namespace DIGITC1
       mReleaseTime = aReleaseTime;  
     }
 
+    public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mAttackTime, mReleaseTime); }
+
     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
       var lES = Operation.Envelope(aInput.Rep, mAttackTime, mReleaseTime);
 
-      Signal rSignal = aInput.CopyWith(lES);
+      mResult = aInput.CopyWith(lES);
 
-      rSignal.Idx              = aStep + 1 ;
-      rSignal.Name             = "Envelope";
-      rSignal.RenderFillColor  = Color.Empty ;
-      rSignal.RenderLineColor  = Color.Red ;
-      rSignal.RenderTopLine    = true ;  
-      rSignal.RenderBottomLine = false ;  
+      mResult.Idx              = aStep + 1 ;
+      mResult.Name             = "Envelope";
+      mResult.RenderFillColor  = Color.Empty ;
+      mResult.RenderLineColor  = Color.Red ;
+      mResult.RenderTopLine    = true ;  
+      mResult.RenderBottomLine = false ;  
 
+      return mResult ;
+    }
+
+    public override void ShowResult ( int aSegmentIdx,  int aStep )
+    {
 
       if ( aSegmentIdx == 0 ) 
       {
-        Context.Form.AddRenderModule(rSignal.Name);
-        rSignal.Render();
+        Context.Form.AddRenderModule(mResult.Name);
+        mResult.Render();
       }
 
-      Context.Log(aSegmentIdx==0,$"Envelope:{Environment.NewLine}{rSignal}");
-
-      return rSignal ;
+      Context.Log(aSegmentIdx==0,$"Envelope:{Environment.NewLine}{mResult}");
     }
 
     float mAttackTime ;

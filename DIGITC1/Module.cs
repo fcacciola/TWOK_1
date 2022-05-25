@@ -13,18 +13,49 @@ using NWaves.Signals;
 
 namespace DIGITC1
 {
+  
+  public class ModuleSignature
+  {
+    public ModuleSignature( params object[] aArguments )
+    {
+      StringBuilder sb = new StringBuilder();  
+      foreach( object arg in aArguments )  
+       sb.Append( arg.ToString() + " | " );  
+      Value = sb.ToString();
+    }
+
+    public string Value { get; private set; } 
+  }
+
   public abstract class Module
   {
-    public abstract Signal ProcessSignal ( int aSegmentIdx, int aStep, Signal aInput );
+    public Signal ProcessSignal ( int aSegmentIdx, int aStep, Signal aInput )
+    {
+      if ( mResult == null )
+        DoProcessSignal ( aSegmentIdx, aStep, aInput );
+
+      ShowResult(aSegmentIdx, aStep) ;
+
+      return mResult;
+    }
+
+    public abstract Signal DoProcessSignal ( int aSegmentIdx, int aStep, Signal aInput );
+
+    public virtual void ShowResult ( int aSegmentIdx, int aStep ) { }
+
+    public abstract ModuleSignature GetSignature();
 
     protected Module () {}
+
+    protected Signal mResult ;
+
   }
 
   public abstract class AudioInputModule : Module
   {
     protected AudioInputModule() : base() {}
 
-    public override Signal ProcessSignal ( int aSegmentIdx, int aStep, Signal aInput )
+    public override Signal DoProcessSignal ( int aSegmentIdx, int aStep, Signal aInput )
     {
       WaveSignal lWaveSignal = aInput as WaveSignal; 
       if ( lWaveSignal == null )
@@ -41,7 +72,7 @@ namespace DIGITC1
   {
     protected LexicalModule() : base() {}
 
-    public override Signal ProcessSignal ( int aSegmentIdx, int aStep, Signal aInput )
+    public override Signal DoProcessSignal ( int aSegmentIdx, int aStep, Signal aInput )
     {
       LexicalSignal lLexicalSignal = aInput as LexicalSignal; 
       if ( lLexicalSignal == null )

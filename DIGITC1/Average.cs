@@ -21,31 +21,35 @@ namespace DIGITC1
       mIterations  = aIterations;  
     }
 
+    public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mWindowSize, mIterations ); }
+
     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
       float[] lAveraged = AverageSamples(aInput.Samples);
 
       var lAVS = new DiscreteSignal(aInput.SamplingRate, lAveraged);
 
-      Signal rSignal = aInput.CopyWith(lAVS);
+      mResult = aInput.CopyWith(lAVS);
 
-      rSignal.Idx              = aStep + 1 ;
-      rSignal.Name             = "Average";
-      rSignal.RenderFillColor  = Color.FromArgb(128,Color.DarkBlue);
-      rSignal.RenderLineColor  = Color.Empty  ;
-      rSignal.RenderTopLine    = false ;  
-      rSignal.RenderBottomLine = false ;  
+      mResult.Idx              = aStep + 1 ;
+      mResult.Name             = "Average";
+      mResult.RenderFillColor  = Color.FromArgb(128,Color.DarkBlue);
+      mResult.RenderLineColor  = Color.Empty  ;
+      mResult.RenderTopLine    = false ;  
+      mResult.RenderBottomLine = false ;  
 
+      return mResult ;
+    }
 
+    public override void ShowResult ( int aSegmentIdx,  int aStep )
+    {
       if ( aSegmentIdx == 0 ) 
       {
-        Context.Form.AddRenderModule(rSignal.Name);
-        rSignal.Render();
+        Context.Form.AddRenderModule(mResult.Name);
+        mResult.Render();
       }
 
-      Context.Log(aSegmentIdx==0,$"Average:{Environment.NewLine}{rSignal}");
-
-      return rSignal ;
+      Context.Log(aSegmentIdx==0,$"Average:{Environment.NewLine}{mResult}");
     }
 
     float[] AverageSamples( float[] aSamples)
@@ -82,6 +86,7 @@ namespace DIGITC1
 
     int mWindowSize ;
     int mIterations ;
+
 
   }
 }

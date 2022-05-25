@@ -36,6 +36,8 @@ namespace DIGITC1
 
     static public ScriptDriver ScriptDriver      { get { return Instance.mScriptDriver ;  } }
 
+    static public Pipeline Pipeline { get { return Instance.mPipeline ; } } 
+
     static public Form1 Form { get { return Instance.mForm ; } }
 
     public static bool ShouldRender( string aName )             => Instance._ShouldRender(aName);
@@ -91,6 +93,8 @@ namespace DIGITC1
     string       mScriptFile     ;
     string       mScriptContents ;
     ScriptDriver mScriptDriver   = new ScriptDriver();
+
+    Pipeline mPipeline = new Pipeline();
 
     public WaveSignal     mInputSignal ;
     public Params         mParams = new Params();

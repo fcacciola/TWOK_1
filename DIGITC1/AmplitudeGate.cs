@@ -18,6 +18,8 @@ namespace DIGITC1
   {
     public AmplitudeGate( float[] aThresholds ) : base() { mThresholds = aThresholds ; }
 
+    public override ModuleSignature GetSignature() { return new ModuleSignature( GetType().Name, mThresholds ); }
+
     protected override Signal ProcessAudioSignal ( int aSegmentIdx,  int aStep, WaveSignal aInput )
     {
       float lMax = aInput.ComputeMax();
@@ -35,27 +37,32 @@ namespace DIGITC1
         rOutput[i] = lOut ;  
       }
 
-      Signal rSignal = aInput.CopyWith(new DiscreteSignal(aInput.SamplingRate, rOutput));
+      mResult = aInput.CopyWith(new DiscreteSignal(aInput.SamplingRate, rOutput));
 
-      rSignal.Idx              = aStep + 1 ;
-      rSignal.Name             = "AmplitudeGate";
-      rSignal.RenderFillColor  = Color.Empty ;
-      rSignal.RenderLineColor  = Color.FromArgb(128, Color.Green) ;
-      rSignal.RenderTopLine    = true ;  
-      rSignal.RenderBottomLine = false ;  
+      mResult.Idx              = aStep + 1 ;
+      mResult.Name             = "AmplitudeGate";
+      mResult.RenderFillColor  = Color.Empty ;
+      mResult.RenderLineColor  = Color.FromArgb(128, Color.Green) ;
+      mResult.RenderTopLine    = true ;  
+      mResult.RenderBottomLine = false ;  
 
+      return mResult ;
+    }
+
+    public override void ShowResult ( int aSegmentIdx,  int aStep )
+    {
       if ( aSegmentIdx == 0 ) 
       {
-        Context.Form.AddRenderModule(rSignal.Name);
-        rSignal.Render();
+        Context.Form.AddRenderModule(mResult.Name);
+        mResult.Render();
       }
 
-      Context.Log(aSegmentIdx==0,$"Amplitude Gate:{Environment.NewLine}{rSignal}");
+      Context.Log(aSegmentIdx==0,$"Amplitude Gate:{Environment.NewLine}{mResult}");
 
-      return rSignal ;
     }
 
     float[] mThresholds;
+
 
   }
 }
