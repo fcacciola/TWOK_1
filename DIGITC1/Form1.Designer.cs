@@ -144,14 +144,13 @@
       this.signalPlot1.AutoScroll = true;
       this.signalPlot1.BackColor = System.Drawing.Color.White;
       this.signalPlot1.ForeColor = System.Drawing.Color.Blue;
-      this.signalPlot1.Gain = 1F;
       this.signalPlot1.Location = new System.Drawing.Point(734, 51);
       this.signalPlot1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
       this.signalPlot1.Name = "signalPlot1";
-      this.signalPlot1.PaddingX = 24;
-      this.signalPlot1.PaddingY = 5;
+      this.signalPlot1.PaddingX = 30;
+      this.signalPlot1.PaddingY = 6;
       this.signalPlot1.Size = new System.Drawing.Size(2944, 305);
-      this.signalPlot1.Stride = 64;
+      this.signalPlot1.Stride = 1;
       this.signalPlot1.TabIndex = 4;
       // 
       // sessionNameBox

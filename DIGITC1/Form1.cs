@@ -127,8 +127,7 @@ namespace DIGITC1
 
         var lISignal = lASource.CreateSignal();
 
-        signalPlot1.Gain   = 100 ;
-        signalPlot1.Stride = (int)Math.Ceiling(lISignal.Rep.Duration) * 10 ;
+        //signalPlot1.Stride = lISignal.Rep.Length ;
 
         lISignal.Name = "Input";
 
