@@ -150,7 +150,7 @@
       this.signalPlot1.PaddingX = 30;
       this.signalPlot1.PaddingY = 6;
       this.signalPlot1.Size = new System.Drawing.Size(2944, 305);
-      this.signalPlot1.Stride = 1;
+      this.signalPlot1.SamplesPerPixel = 500;
       this.signalPlot1.TabIndex = 4;
       // 
       // sessionNameBox

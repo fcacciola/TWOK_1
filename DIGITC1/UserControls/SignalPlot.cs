@@ -23,7 +23,7 @@ namespace NWaves.DemoForms.UserControls
 
         internal float mAmplitude ;
 
-        internal void Render( Graphics aG, int aHeight, int aPaddingX, int aPaddingY, int aTimeAxisHeight, int aStride)
+        internal void Render( Graphics aG, int aHeight, int aPaddingX, int aPaddingY, int aTimeAxisHeight, int aSamplePerPixel)
         {
           var fillPen = new Pen(mFillColor);
           var linePen = new Pen(mLineColor);
@@ -37,12 +37,12 @@ namespace NWaves.DemoForms.UserControls
 
           var lOffset = aHeight / 2;
 
-          for ( int i = 0; i < mSignal.Length; i += aStride )
+          for ( int i = 0; i < mSignal.Length; i += aSamplePerPixel )
           {
             float lMinV = 0.0f;
             float lMaxV = 0.0f;
 
-            for ( int j = 0 ; j < aStride && (i + j ) < mSignal.Length ; ++ j )
+            for ( int j = 0 ; j < aSamplePerPixel && (i + j ) < mSignal.Length ; ++ j )
             {
               float lV = mSignal[i+j];
               if (lV > lMaxV) lMaxV = lV ;
@@ -87,8 +87,8 @@ namespace NWaves.DemoForms.UserControls
 
       List<Layer> mLayers = null ;
       Bitmap      mBitmap;
-      double      mSamplingRate = 0 ;
-      int         mMaxLength = 0 ;
+      double      mSamplingRate = 44100 ;
+      int         mMaxLength    = 0 ;
 
       public void SetLayer( string aName, int aIdx, DiscreteSignal aSignal, Color aFillColor, Color aLineColor, int aLineThickness, bool aTopLine, bool aBottomLine )
       {
@@ -133,13 +133,18 @@ namespace NWaves.DemoForms.UserControls
         foreach ( var lL in mLayers ) 
           mMaxLength = Math.Max(mMaxLength,lL.mSignal.Length);
 
-        mStride = (int)Math.Ceiling((float)mMaxLength / (float)(Width-PaddingX*2)) ;
+        mSamplesPerPixel = (int)Math.Ceiling((float)mMaxLength / (float)(Width-PaddingX*2)) ;
 
-        AutoScrollMinSize = new Size((mMaxLength / mStride) + 20, 0);
+        SetupAutoScrollMinSize();
 
         mSamplingRate = aSignal.SamplingRate ;
 
         SetupBitmap();
+      }
+
+      void SetupAutoScrollMinSize()
+      {
+        AutoScrollMinSize = new Size((mMaxLength / mSamplesPerPixel) + PaddingX * 2 + 20, 0);
       }
 
       void SetupBitmap()
@@ -161,15 +166,15 @@ namespace NWaves.DemoForms.UserControls
         Invalidate();
       }
 
-      int mStride = 0;
+      int mSamplesPerPixel = 0;
       
-      public int Stride
+      public int SamplesPerPixel
       {
-        get { return mStride; }
+        get { return mSamplesPerPixel; }
         set 
         { 
-          mStride = value; 
-          AutoScrollMinSize = new Size((mMaxLength / mStride) + 20, 0);
+          mSamplesPerPixel = value; 
+          SetupAutoScrollMinSize();
           SetupBitmap();
           Invalidate();
         }
@@ -186,7 +191,6 @@ namespace NWaves.DemoForms.UserControls
       public SignalPlot()
       {
           InitializeComponent();
-          ForeColor = Color.Blue;
       }
 
       protected override void OnPaint(PaintEventArgs e)
@@ -198,15 +202,16 @@ namespace NWaves.DemoForms.UserControls
 
       private void buttonZoomOut_Click(object sender, System.EventArgs e)
       {
-        Stride = (int)(mStride * 1.25);
+        SamplesPerPixel = (int)(mSamplesPerPixel * 1.25);
       }
 
       private void buttonZoomIn_Click(object sender, System.EventArgs e)
       {
-        Stride = (int)(mStride / 1.25);
+        SamplesPerPixel = (int)Math.Max(mSamplesPerPixel / 1.25,1);
       }
 
 
+      static int c = 0 ;
 
       private void MakeBitmap( List<Layer> aLayers )
       {
@@ -218,19 +223,20 @@ namespace NWaves.DemoForms.UserControls
         {
           lG.Clear(Color.White);
 
-          int lTimeAxisHeight = DrawTimeAxis(lG);
+          int lTimeAxisHeight = DrawTimeAxis(lG, lWidth);
 
-          aLayers.ForEach( lLayer => lLayer.Render(lG, Height, PaddingX, PaddingY, lTimeAxisHeight, mStride) ) ;
+          aLayers.ForEach( lLayer => lLayer.Render(lG, Height, PaddingX, PaddingY, lTimeAxisHeight, mSamplesPerPixel) ) ;
         }
+        mBitmap.Save($"C:\\Work\\DIGITC_{c}.png"); ++ c ;
       }
 
-      int DrawTimeAxis( Graphics aG )
+      int DrawTimeAxis( Graphics aG, int aWidth )
       {
         var lFont = new Font("arial", 10);
         var black = new Pen(Color.Black);
         var brush = new SolidBrush(Color.Black);
         
-        int lEffectiveWidth = Width - PaddingX * 2 ;
+        int lEffectiveWidth = aWidth - PaddingX * 2 ;
 
         SizeF lTimeLabelSize = aG.MeasureString(TimeMarkToLabel(119), lFont);
 
@@ -245,7 +251,7 @@ namespace NWaves.DemoForms.UserControls
         float lAxisY = lTimeLabelSize.Height * 2f ;
 
         float lLX = (float)PaddingX;
-        float lHX = (float)(Width - PaddingX);
+        float lHX = (float)(aWidth - PaddingX);
 
         aG.DrawLine(black, lLX, lAxisY, lHX, lAxisY);
 
@@ -262,8 +268,10 @@ namespace NWaves.DemoForms.UserControls
         float lLabelX = lLX ;
         float lLabelY = 4 ;
 
+        float lTotalTime = (float)lEffectiveWidth * (float)mSamplesPerPixel / (float)mSamplingRate ;
+
         float lTimeMark = 0f ;
-        float lTimeStep = (float)(mSamplingRate/mStride) / lLabels ;
+        float lTimeStep = lTotalTime / lLabels ;
         for ( int i = 0 ; i <= lLabels ; ++ i, lLabelX += lMarkWidth*2, lTimeMark += lTimeStep )
         {
           string lLabel = TimeMarkToLabel(lTimeMark);
